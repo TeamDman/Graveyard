@@ -1,8 +1,11 @@
+package main.Handlers;
+
+import main.OwO;
 import sx.blah.discord.api.ClientBuilder;
 import sx.blah.discord.api.IDiscordClient;
 import sx.blah.discord.util.DiscordException;
 
-class ClientHandler {
+public class ClientHandler {
 
 	private static IDiscordClient createClient(String token, boolean login) {
 		ClientBuilder clientBuilder = new ClientBuilder();
@@ -19,7 +22,7 @@ class ClientHandler {
 		}
 	}
 
-	static IDiscordClient getClient() {
+	public static IDiscordClient getClient() {
 		if (OwO.client == null) {
 			return createClient(OwO.config.get("discord-token"),true);
 		}

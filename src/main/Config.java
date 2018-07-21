@@ -1,10 +1,12 @@
+package main;
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
 
-class Config {
+public class Config {
 	private final String     name;
 	private final Properties props = new Properties();
 	private final ConfigType type;
@@ -23,7 +25,7 @@ class Config {
 		save();
 	}
 
-	<T> T get(Object key) {
+	public <T> T get(Object key) {
 		//noinspection unchecked
 		return (T) props.get(key); // Not good, but good enough for now.
 	}

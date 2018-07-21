@@ -2,11 +2,13 @@ package main.Handlers;
 
 import eu.infomas.annotation.AnnotationDetector;
 import main.Commands.obj.Command;
+import main.Commands.obj.CommandArgument;
 import main.Commands.obj.RegisterCommand;
 import main.OwO;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Optional;
 
@@ -48,8 +50,16 @@ public class CommandHandler {
 
 	public static Optional<Command> findCommand(String name) {
 		return commands.stream()
-				.filter(v -> v.name.equals(name))
+				.filter(v -> v.name.toLowerCase().equals(name.toLowerCase()))
 				.findFirst();
 	}
 
+	public static void invokeCommand(Command c, CommandArgument args){
+		try {
+			c.getClass().getDeclaredMethod("invoke",args.getClass()).invoke(c,args);
+		} catch (NoSuchMethodException|InvocationTargetException|IllegalAccessException e) {
+			OwO.logger.error("Error executing command {}",c);
+			e.printStackTrace();
+		}
+	}
 }

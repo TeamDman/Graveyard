@@ -1,3 +1,5 @@
+.idea
+
 # From https://github.com/github/gitignore/blob/master/Gradle.gitignore
 .gradle
 /build/
@@ -105,3 +107,7 @@ Icon
 Network Trash Folder
 Temporary Items
 .apdisk
+.idea/.name
+.idea/misc.xml
+modules/
+/.idea/misc.xml

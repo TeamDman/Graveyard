@@ -10,14 +10,14 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class CommandListener implements IListener<MessageReceivedEvent> {
-	private Pattern commandPattern = Pattern.compile("OwO\\s+(\\S+)(.*)");
+	private Pattern commandPattern = Pattern.compile("OwO\\s+(\\S+)\\s*(.*)");
 
 	@Override
 	public void handle(MessageReceivedEvent event) {
 		Matcher m = commandPattern.matcher(event.getMessage().getContent());
 		if (m.find()) {
 			OwO.logger.info(event.getMessage().getContent());
-			CommandHandler.findCommand(m.group(1)).ifPresent(c -> c.invoke(ArgumentBuilder.build(c, event.getMessage())));
+			CommandHandler.findCommand(m.group(1)).ifPresent(c -> CommandHandler.invokeCommand(c,ArgumentBuilder.build(c, event.getMessage(),m)));
 		}
 	}
 }

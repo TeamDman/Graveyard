@@ -16,7 +16,7 @@ public class OwO {
 	public static final Logger             logger;
 
 	static {
-		logger = LoggerFactory.getLogger("main.OwO");
+		logger = LoggerFactory.getLogger("OwO");
 		config = Config.getGlobalConfig();
 		client = ClientHandler.getClient();
 	}

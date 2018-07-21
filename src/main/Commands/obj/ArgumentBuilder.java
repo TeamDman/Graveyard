@@ -1,27 +1,15 @@
 package main.Commands.obj;
 
+import com.google.devtools.common.options.OptionsParser;
 import sx.blah.discord.handle.obj.IMessage;
 
-import java.util.ArrayDeque;
-import java.util.Deque;
+import java.util.regex.Matcher;
 
 public class ArgumentBuilder {
-	public static  CommandArgument build(Command c, IMessage m) {
-		ParamVisitor visitor = new ParamVisitor();
-		c.collectParameters(visitor::visit);
-
-		return new CommandArgument(m, visitor.getParams());
+	public static CommandArgument build(Command cmd, IMessage msg, Matcher m) {
+		OptionsParser parser = OptionsParser.newOptionsParser(cmd.getOptions());
+		parser.parseAndExitUponError(m.group(2).split("\\s+"));
+		return new CommandArgument(msg, parser.getOptions(cmd.getOptions()));
 	}
 
-	private static class ParamVisitor {
-		Deque<Parameter> params = new ArrayDeque<>();
-
-		void visit(Parameter p) {
-//			if (p.)
-		}
-
-		ParamIterator getParams() {
-			return null; // TODO;
-		}
-	}
 }

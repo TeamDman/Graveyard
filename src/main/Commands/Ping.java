@@ -7,15 +7,12 @@ import main.Commands.obj.CommandArgument;
 import main.Commands.obj.Parameter;
 import main.Commands.obj.RegisterCommand;
 import main.OwO;
+import sx.blah.discord.handle.obj.IMessage;
 
 import java.util.function.Consumer;
 
-@RegisterCommand
+@RegisterCommand(name="Ping")
 public class Ping extends Command {
-
-	public Ping() {
-		this.name="Ping";
-	}
 
 	public static class Options extends OptionsDefault {
 		@Option(
@@ -27,22 +24,17 @@ public class Ping extends Command {
 		public boolean time;
 	}
 
+	@SuppressWarnings("unused")
 	public void invoke(CommandArgument<Options> arg) {
-		arg.message.getChannel().sendMessage("Pong!");
-	}
-
-	@Override
-	public Command getInstance() {
-		return new Ping();
+		if (arg.options.time) {
+			IMessage msg = arg.message.getChannel().sendMessage("Pong!");
+			msg.edit("Ping! Latency is " + (msg.getTimestamp().toEpochMilli() - arg.message.getTimestamp().toEpochMilli()) + "ms");
+		} else
+			arg.message.getChannel().sendMessage("Pong!");
 	}
 
 	@Override
 	public Class<? extends OptionsBase> getOptions() {
 		return Options.class;
-	}
-
-	@Override
-	public void collectParameters(Consumer<Parameter> visitor) {
-		visitor.accept(Parameter.TEXT);
 	}
 }

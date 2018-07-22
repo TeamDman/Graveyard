@@ -1,6 +1,6 @@
 package main.Handlers;
 
-import main.Commands.Listeners.CommandListener;
+import main.Listeners.CommandListener;
 import main.OwO;
 import sx.blah.discord.api.events.EventDispatcher;
 import sx.blah.discord.api.events.EventSubscriber;

@@ -23,8 +23,9 @@ public class CommandHandler {
 					try {
 						Class<?> clazz = Class.forName(className);
 						Object   inst  = clazz.newInstance();
-						if (inst instanceof Command) {
-							OwO.logger.debug("Found command {}", inst);
+						if (inst instanceof Command && annotation == RegisterCommand.class) {
+							OwO.logger.debug("Found command {} with annotation {}", inst, annotation);
+							((Command) inst).name = ((RegisterCommand) clazz.getAnnotation(annotation)).name();
 							registerCommand((Command) inst);
 						}
 					} catch (ClassNotFoundException | IllegalAccessException | InstantiationException e) {
@@ -54,11 +55,15 @@ public class CommandHandler {
 				.findFirst();
 	}
 
-	public static void invokeCommand(Command c, CommandArgument args){
+	public static void invokeCommand(Command c, CommandArgument args) {
+		if (args == null) {
+			OwO.logger.warn("Missing arguments object invoking command {}. Skipping.", c.name);
+			return;
+		}
 		try {
-			c.getClass().getDeclaredMethod("invoke",args.getClass()).invoke(c,args);
-		} catch (NoSuchMethodException|InvocationTargetException|IllegalAccessException e) {
-			OwO.logger.error("Error executing command {}",c);
+			c.getClass().getDeclaredMethod("invoke", args.getClass()).invoke(c, args);
+		} catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+			OwO.logger.error("Error executing command {}", c);
 			e.printStackTrace();
 		}
 	}

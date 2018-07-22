@@ -19,9 +19,7 @@ public abstract class Command {
 
 	public String name;
 
-	public abstract Command getInstance();
-
-	public abstract Class<? extends OptionsBase> getOptions();
-
-	public abstract void collectParameters(Consumer<Parameter> visitor);
+	public Class<? extends OptionsBase> getOptions() {
+		return OptionsDefault.class;
+	}
 }

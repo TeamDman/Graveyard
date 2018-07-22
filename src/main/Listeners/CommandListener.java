@@ -1,4 +1,4 @@
-package main.Commands.Listeners;
+package main.Listeners;
 
 import main.Commands.obj.ArgumentBuilder;
 import main.Handlers.CommandHandler;

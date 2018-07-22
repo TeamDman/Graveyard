@@ -13,7 +13,10 @@ import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class CommandHandler {
 	public static final ArrayList<Command> commands = new ArrayList<>();
@@ -29,9 +32,11 @@ public class CommandHandler {
 						if (inst instanceof Command && annotation == RegisterCommand.class) {
 							OwO.logger.debug("Found command {} with annotation {}", inst, annotation);
 							((Command) inst).name = ((RegisterCommand) clazz.getAnnotation(annotation)).name();
+							((Command) inst).commands = ((RegisterCommand) clazz.getAnnotation(annotation)).cmds();
 							registerCommand((Command) inst);
 						}
 					} catch (ClassNotFoundException | IllegalAccessException | InstantiationException e) {
+						OwO.logger.warn("Exception registering command from {}",className);
 						e.printStackTrace();
 					}
 				}
@@ -52,9 +57,9 @@ public class CommandHandler {
 		commands.add(c);
 	}
 
-	public static Optional<Command> findCommand(String name) {
+	public static Optional<Command> findCommand(String cmd) {
 		return commands.stream()
-				.filter(v -> v.name.toLowerCase().equals(name.toLowerCase()))
+				.filter(v -> Arrays.stream(v.commands).anyMatch(cmd::equals))
 				.findFirst();
 	}
 
@@ -64,16 +69,21 @@ public class CommandHandler {
 			return;
 		}
 		if (args.options.help) {
-			args.message.getChannel().sendMessage(new EmbedBuilder(){{
-				withTitle(c.name);
-				appendDesc(args.parser.describeOptions(Maps.newHashMap(),OptionsParser.HelpVerbosity.LONG));
-			}}.build());
+			args.message.getChannel().sendMessage(new EmbedBuilder()
+					.withTitle(c.name)
+					.appendDesc(args.parser.describeOptions(Maps.newHashMap(), OptionsParser.HelpVerbosity.LONG))
+					.build());
 		} else
 			try {
 				c.getClass().getDeclaredMethod("invoke", args.getClass()).invoke(c, args);
 			} catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
 				OwO.logger.error("Error executing command {}", c);
 				e.printStackTrace();
+				args.message.getChannel().sendMessage(new EmbedBuilder()
+						.withTitle("Error executing command")
+						.appendDesc(e.toString())
+						.build()
+				);
 			}
 	}
 }

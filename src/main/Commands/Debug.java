@@ -5,7 +5,7 @@ import main.Commands.obj.CommandArgument;
 import main.Commands.obj.RegisterCommand;
 import sx.blah.discord.util.EmbedBuilder;
 
-@RegisterCommand(name = "Debug")
+@RegisterCommand(name = "Debug", cmds={"debug"})
 public class Debug extends Command {
 
 	//	@Override

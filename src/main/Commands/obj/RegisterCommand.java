@@ -13,4 +13,6 @@ public @interface RegisterCommand {
 	 */
 	String name();
 
+	String[] cmds();
+
 }

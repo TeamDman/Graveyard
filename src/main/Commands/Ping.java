@@ -4,8 +4,12 @@ import com.google.devtools.common.options.Option;
 import main.Commands.obj.Command;
 import main.Commands.obj.CommandArgument;
 import main.Commands.obj.RegisterCommand;
+import sx.blah.discord.handle.obj.IGuild;
 import sx.blah.discord.handle.obj.IMessage;
+import sx.blah.discord.handle.obj.IUser;
+import sx.blah.discord.handle.obj.Permissions;
 
+import java.util.EnumSet;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -54,5 +58,15 @@ public class Ping extends Command {
 				defaultValue = "0"
 		)
 		public int delay;
+	}
+//
+//	@Override
+//	public boolean hasPerms(IUser user, IGuild guild) {
+//		return false;
+//	}
+
+	@Override
+	public EnumSet<Permissions> getPerms() {
+		return EnumSet.of(Permissions.SEND_MESSAGES);
 	}
 }

@@ -21,19 +21,17 @@ public class Help extends Command {
 						.withAuthorIcon(args.message.getAuthor().getAvatarURL())
 						.withAuthorName(args.message.getAuthor().getName())
 						.withThumbnail(args.message.getGuild().getIconURL())
-						.appendField("Owner", args.message.getGuild().getOwner().getName(), true)
+						.appendField("Owner", args.message.getGuild().getOwner().mention(), true)
 						.appendField("Roles", args.message.getGuild().getRoles().size() + " roles", true)
 						.appendField("Channels", args.message.getGuild().getChannels().size() + " channels", true)
 						.appendField("Guild Users", args.message.getGuild().getTotalMemberCount() + " users", true)
 						.appendField("Inactive Members", args.message.getGuild().getUsersToBePruned(30) + " inactive users (30 days)", true)
 						.build(),
 				new EmbedBuilder()
-						.withTitle("Role Information")
+						.withTitle("Role Information ("+args.message.getGuild().getRoles().size() + " roles)")
 						.withAuthorIcon(args.message.getAuthor().getAvatarURL())
 						.withAuthorName(args.message.getAuthor().getName())
-//						.appendDesc(args.message.getGuild().getRoles().stream().map(IRole::getName).collect(Collectors.joining("\n")))
-						.appendDesc("<@&470434092870270976>")
-						.appendDesc("<@159018622600216577>")
+						.appendDesc(args.message.getGuild().getRoles().stream().map(r -> "<@&"+r.getStringID()+">").collect(Collectors.joining("\n")))
 						.build()
 		));
 	}

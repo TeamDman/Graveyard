@@ -7,14 +7,16 @@ import main.Commands.obj.Command;
 import main.Commands.obj.CommandArgument;
 import main.Commands.obj.RegisterCommand;
 import main.OwO;
+import sx.blah.discord.handle.obj.Permissions;
 import sx.blah.discord.util.EmbedBuilder;
+import sx.blah.discord.util.RequestBuffer;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
+import java.util.EnumSet;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -30,13 +32,15 @@ public class CommandHandler {
 						Class<?> clazz = Class.forName(className);
 						Object   inst  = clazz.newInstance();
 						if (inst instanceof Command && annotation == RegisterCommand.class) {
+							Command         command   = ((Command) inst);
+							RegisterCommand registrar = ((RegisterCommand) clazz.getAnnotation(annotation));
 							OwO.logger.debug("Found command {} with annotation {}", inst, annotation);
-							((Command) inst).name = ((RegisterCommand) clazz.getAnnotation(annotation)).name();
-							((Command) inst).commands = ((RegisterCommand) clazz.getAnnotation(annotation)).cmds();
+							command.name = registrar.name();
+							command.commands = registrar.cmds();
 							registerCommand((Command) inst);
 						}
 					} catch (ClassNotFoundException | IllegalAccessException | InstantiationException e) {
-						OwO.logger.warn("Exception registering command from {}",className);
+						OwO.logger.warn("Exception registering command from {}", className);
 						e.printStackTrace();
 					}
 				}
@@ -73,7 +77,15 @@ public class CommandHandler {
 					.withTitle(c.name)
 					.appendDesc(args.parser.describeOptions(Maps.newHashMap(), OptionsParser.HelpVerbosity.LONG))
 					.build());
-		} else
+		} else if (!c.hasPerms(args.message.getAuthor(), args.message.getGuild())) {
+			EnumSet<Permissions> has = args.message.getAuthor().getPermissionsForGuild(args.message.getGuild());
+			RequestBuffer.request(() ->
+					args.message.getChannel().sendMessage("You are missing permissions for this command.\n"
+							+ c.getPerms().stream()
+							.filter(p -> !has.contains(p))
+							.map(Enum::name)
+							.collect(Collectors.joining("\n"))));
+		} else {
 			try {
 				c.getClass().getDeclaredMethod("invoke", args.getClass()).invoke(c, args);
 			} catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
@@ -85,5 +97,6 @@ public class CommandHandler {
 						.build()
 				);
 			}
+		}
 	}
 }

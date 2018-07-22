@@ -19,6 +19,7 @@ public class OwO {
 		logger = LoggerFactory.getLogger("OwO");
 		config = Config.getGlobalConfig();
 		client = ClientHandler.getClient();
+
 	}
 
 	static void exit() {

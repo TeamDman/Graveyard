@@ -9,9 +9,9 @@ import main.Commands.obj.RegisterCommand;
 import main.Listeners.CommandListenerSingleton;
 import main.OwO;
 import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedEvent;
-import sx.blah.discord.handle.impl.obj.Message;
 import sx.blah.discord.handle.impl.obj.ReactionEmoji;
 import sx.blah.discord.handle.obj.IUser;
+import sx.blah.discord.util.RequestBuffer;
 
 import java.util.Set;
 import java.util.Timer;
@@ -27,11 +27,11 @@ public class Delay extends Command {
 				new Timer().schedule(new TimerTask() {
 					@Override
 					public void run() {
-						event.getMessage().removeReaction(OwO.client.getOurUser(),ReactionEmoji.of("⏱"));
+						RequestBuffer.request(() -> event.getMessage().removeReaction(OwO.client.getOurUser(), ReactionEmoji.of("⏱")));
 						CommandListenerSingleton.getSingleton().handle(event);
 					}
 				}, pair.getValue());
-				event.getMessage().addReaction(ReactionEmoji.of("⏱"));
+				RequestBuffer.request(() -> event.getMessage().addReaction(ReactionEmoji.of("⏱")));
 				waitingForNext.remove(pair);
 				return true;
 			}

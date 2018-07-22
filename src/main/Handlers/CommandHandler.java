@@ -1,10 +1,13 @@
 package main.Handlers;
 
+import com.google.common.collect.Maps;
+import com.google.devtools.common.options.OptionsParser;
 import eu.infomas.annotation.AnnotationDetector;
 import main.Commands.obj.Command;
 import main.Commands.obj.CommandArgument;
 import main.Commands.obj.RegisterCommand;
 import main.OwO;
+import sx.blah.discord.util.EmbedBuilder;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
@@ -60,11 +63,17 @@ public class CommandHandler {
 			OwO.logger.warn("Missing arguments object invoking command {}. Skipping.", c.name);
 			return;
 		}
-		try {
-			c.getClass().getDeclaredMethod("invoke", args.getClass()).invoke(c, args);
-		} catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
-			OwO.logger.error("Error executing command {}", c);
-			e.printStackTrace();
-		}
+		if (args.options.help) {
+			args.message.getChannel().sendMessage(new EmbedBuilder(){{
+				withTitle(c.name);
+				appendDesc(args.parser.describeOptions(Maps.newHashMap(),OptionsParser.HelpVerbosity.LONG));
+			}}.build());
+		} else
+			try {
+				c.getClass().getDeclaredMethod("invoke", args.getClass()).invoke(c, args);
+			} catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+				OwO.logger.error("Error executing command {}", c);
+				e.printStackTrace();
+			}
 	}
 }

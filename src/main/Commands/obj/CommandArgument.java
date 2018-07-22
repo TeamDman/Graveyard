@@ -4,7 +4,7 @@ import com.google.devtools.common.options.OptionsBase;
 import com.google.devtools.common.options.OptionsParser;
 import sx.blah.discord.handle.obj.IMessage;
 
-public class CommandArgument<T extends OptionsBase> {
+public class CommandArgument<T extends Command.OptionsDefault> {
 	public Command command;
 	public IMessage message;
 	public T        options;

@@ -1,5 +1,6 @@
 package main.Listeners;
 
+import main.Commands.Delay;
 import main.Commands.obj.ArgumentBuilder;
 import main.Handlers.CommandHandler;
 import main.OwO;
@@ -25,10 +26,11 @@ public class CommandListenerSingleton implements IListener<MessageReceivedEvent>
 	@Override
 	public void handle(MessageReceivedEvent event) {
 		OwO.logger.debug("Received message '{}'", event.getMessage().getContent());
+		if (Delay.popUserIfWaiting(event))
+			return;
 		Matcher m = commandPattern.matcher(event.getMessage().getContent());
 		if (m.find())
 			CommandHandler.findCommand(m.group(1))
 					.ifPresent(c -> CommandHandler.invokeCommand(c, ArgumentBuilder.build(c, event.getMessage(), m)));
-
 	}
 }

@@ -9,58 +9,50 @@ import java.util.Properties;
 public class Config {
 	private final String     name;
 	private final Properties props = new Properties();
-	private final ConfigType type;
 
-	static Config getGlobalConfig() {
-		if (OwO.config == null) {
-			return new Config("global", ConfigType.GLOBAL);
-		}
-		return OwO.config;
-	}
-
-	private Config(String name, ConfigType type) {
+	private Config(String name) {
 		this.name = name;
-		this.type = type;
 		load();
-		save();
-	}
-
-	public <T> T get(Object key) {
-		//noinspection unchecked
-		return (T) props.get(key); // Not good, but good enough for now.
 	}
 
 	private void load() {
-		try (FileInputStream in = new FileInputStream("./properties/" + name + ".properties")) {
+		try (FileInputStream in = new FileInputStream(name + ".properties")) {
 			props.load(in);
 		} catch (FileNotFoundException eNF) { // Create config from defaults
-			try (FileInputStream ind = new FileInputStream(type.getDefaultsFile())) {
-				props.load(ind);
-			} catch (IOException die) { // Failed loading defaults
-				OwO.logger.error("Failed to load default config file creating '{}'", name);
-				die.printStackTrace();
-				OwO.exit();
-			}
+			for (OwOProperty p : OwOProperty.values())
+				props.put(p.name(), p.fallback);
+			save();
 		} catch (IOException eIO) {
-			OwO.logger.error("Unprecedented error creating config object '{}'", name);
-			eIO.printStackTrace();
+			OwO.logger.error("Unhandled error creating config object '" + name + "'", eIO);
 		}
 	}
 
 	private void save() {
-		try (FileOutputStream out = new FileOutputStream("./properties/" + name + ".properties")) {
-			props.store(out, type.name());
+		try (FileOutputStream out = new FileOutputStream(name + ".properties")) {
+			props.store(out, name);
 		} catch (IOException e) {
-			OwO.logger.error("Error while saving properties for '{}'", name);
-			e.printStackTrace();
+			OwO.logger.error("Error while saving properties for '" + name + "'", e);
 		}
 	}
 
-	enum ConfigType {
-		GLOBAL;
+	static Config getConfig() {
+		if (OwO.config == null) {
+			return new Config("OwO-Bot");
+		}
+		return OwO.config;
+	}
 
-		String getDefaultsFile() {
-			return "./properties/" + values()[ordinal()].toString().toLowerCase() + "-default.properties";
+	public <T> T get(OwOProperty key) {
+		//noinspection unchecked
+		return (T) props.get(key.name()); // Not good, but good enough for now.
+	}
+
+	public enum OwOProperty {
+		DISCORD_TOKEN("undefined");
+		Object fallback;
+
+		OwOProperty(Object fallback) {
+			this.fallback = fallback;
 		}
 	}
 }

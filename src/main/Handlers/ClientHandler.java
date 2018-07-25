@@ -1,5 +1,6 @@
 package main.Handlers;
 
+import main.Config;
 import main.OwO;
 import sx.blah.discord.api.ClientBuilder;
 import sx.blah.discord.api.IDiscordClient;
@@ -17,14 +18,15 @@ public class ClientHandler {
 				return clientBuilder.build();
 			}
 		} catch (DiscordException e) {
-			e.printStackTrace();
+			OwO.logger.error("Discord token not present. Check OwO-Bot.properties for valid token",e);
+			OwO.exit(OwO.ExitLevel.ERROR);
 			return null;
 		}
 	}
 
 	public static IDiscordClient getClient() {
 		if (OwO.client == null) {
-			return createClient(OwO.config.get("discord-token"),true);
+			return createClient(OwO.config.get(Config.OwOProperty.DISCORD_TOKEN),true);
 		}
 		return OwO.client;
 	}

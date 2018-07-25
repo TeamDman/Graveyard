@@ -1,17 +1,16 @@
 package main.Commands;
 
+import com.google.common.collect.Lists;
 import main.Commands.obj.Command;
 import main.Commands.obj.CommandArgument;
 import main.Commands.obj.RegisterCommand;
 import sx.blah.discord.util.EmbedBuilder;
 
-@RegisterCommand(name = "Debug", cmds={"debug"})
+@RegisterCommand()
 public class Debug extends Command {
-
-	//	@Override
-	//	public Class<? extends OptionsBase> getOptions() {
-	//		return OptionsBase.class;
-	//	}
+	public Debug() {
+		super("Debug", "debug", null, null);
+	}
 
 	@SuppressWarnings("unused")
 	public void invoke(CommandArgument<OptionsDefault> args) {
@@ -19,8 +18,4 @@ public class Debug extends Command {
 		embed.appendField("Arguments", "[" + String.join(", ", args.parser.getResidue()) + "]", false);
 		args.message.getChannel().sendMessage(embed.build());
 	}
-	//
-	//	public static class Options extends OptionsBase {
-	//
-	//	}
 }

@@ -13,9 +13,11 @@ import java.util.EnumSet;
 import java.util.Timer;
 import java.util.TimerTask;
 
-@RegisterCommand(name = "Ping", cmds={"ping"})
+@RegisterCommand()
 public class Ping extends Command {
-
+	public Ping() {
+		super("Ping", "ping", Options.class, EnumSet.of(Permissions.SEND_MESSAGES));
+	}
 	@SuppressWarnings("unused")
 	public void invoke(CommandArgument<Options> arg) {
 		new Timer().schedule(new TimerTask() {
@@ -26,11 +28,6 @@ public class Ping extends Command {
 					msg.edit("Ping! Latency is " + (msg.getTimestamp().toEpochMilli() - arg.message.getTimestamp().toEpochMilli()) + "ms");
 			}
 		}, arg.options.delay);
-	}
-
-	@Override
-	public Class<? extends OptionsDefault> getOptions() {
-		return Options.class;
 	}
 
 	public static class Options extends OptionsDefault {
@@ -58,15 +55,5 @@ public class Ping extends Command {
 				defaultValue = "0"
 		)
 		public int delay;
-	}
-//
-//	@Override
-//	public boolean hasPerms(IUser user, IGuild guild) {
-//		return false;
-//	}
-
-	@Override
-	public EnumSet<Permissions> getPerms() {
-		return EnumSet.of(Permissions.SEND_MESSAGES);
 	}
 }

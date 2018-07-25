@@ -25,7 +25,6 @@ public class CommandListenerSingleton implements IListener<MessageReceivedEvent>
 
 	@Override
 	public void handle(MessageReceivedEvent event) {
-		OwO.logger.debug("Received message '{}'", event.getMessage().getContent());
 		if (Delay.popUserIfWaiting(event))
 			return;
 		Matcher m = commandPattern.matcher(event.getMessage().getContent());

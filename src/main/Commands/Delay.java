@@ -17,8 +17,12 @@ import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 
-@RegisterCommand(name = "Delay", cmds = {"delay"})
+@RegisterCommand()
 public class Delay extends Command {
+	public Delay() {
+		super("Delay","delay", Options.class, null);
+	}
+
 	private static Set<Pair<IUser, Integer>> waitingForNext = Sets.newConcurrentHashSet();
 
 	public static boolean popUserIfWaiting(MessageReceivedEvent event) {
@@ -43,11 +47,6 @@ public class Delay extends Command {
 		Pair<IUser, Integer> pair = new Pair<>(args.message.getAuthor(), args.options.delay);
 		waitingForNext.add(pair);
 		args.message.getChannel().sendMessage("Your next message's evaluation will be delayed by " + args.options.delay + "ms.");
-	}
-
-	@Override
-	public Class<? extends OptionsDefault> getOptions() {
-		return Options.class;
 	}
 
 	public static class Options extends Command.OptionsDefault {

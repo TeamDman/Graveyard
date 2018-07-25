@@ -6,8 +6,11 @@ import main.Commands.obj.CommandArgument;
 import main.Commands.obj.RegisterCommand;
 import sx.blah.discord.handle.obj.Permissions;
 
-@RegisterCommand(name = "Say", cmds = {"say"})
+@RegisterCommand()
 public class Say extends Command {
+	public Say() {
+		super("Say","say", Options.class, null);
+	}
 	@SuppressWarnings("unused")
 	public void invoke(CommandArgument<Options> args) {
 		if (args.options.tts) {
@@ -18,11 +21,6 @@ public class Say extends Command {
 		} else {
 			args.message.getChannel().sendMessage(String.join(" ", args.parser.getResidue()));
 		}
-	}
-
-	@Override
-	public Class<? extends OptionsDefault> getOptions() {
-		return Options.class;
 	}
 
 	public static class Options extends OptionsDefault {

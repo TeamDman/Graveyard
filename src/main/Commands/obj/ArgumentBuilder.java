@@ -22,10 +22,14 @@ public class ArgumentBuilder {
 				appendField("Command Option Error", exOpt.getLocalizedMessage(), true);
 			}}.build());
 		} catch (IllegalArgumentException | IllegalStateException e) {
-			OwO.logger.error("Error encountered invoking command {}", cmd.name);
-			e.printStackTrace();
+			OwO.logger.error("Error encountered invoking command " + cmd.name, e);
 		}
 		return null;
+	}
+
+	@SuppressWarnings("unchecked")
+	public static CommandArgument buildEmpty(Command cmd) {
+		return new CommandArgument(cmd, null, null, null);
 	}
 
 }

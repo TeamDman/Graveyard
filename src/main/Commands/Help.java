@@ -10,8 +10,11 @@ import sx.blah.discord.util.EmbedBuilder;
 
 import java.util.stream.Collectors;
 
-@RegisterCommand(name = "Help", cmds = {"help", "?", "info"})
+@RegisterCommand()
 public class Help extends Command {
+	public Help() {
+		super("Help",new String[]{"help","info","?"}, null, null);
+	}
 	@SuppressWarnings("unused")
 	public void invoke(CommandArgument<OptionsDefault> args) {
 		//		IMessage msg = args.message.getChannel().sendMessage()

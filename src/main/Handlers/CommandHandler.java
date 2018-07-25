@@ -8,6 +8,7 @@ import main.Commands.obj.Command;
 import main.Commands.obj.CommandArgument;
 import main.Commands.obj.RegisterCommand;
 import main.OwO;
+import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedEvent;
 import sx.blah.discord.handle.obj.Permissions;
 import sx.blah.discord.util.EmbedBuilder;
 import sx.blah.discord.util.RequestBuffer;
@@ -20,10 +21,13 @@ import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.Map;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class CommandHandler {
-	public static final Map<Command, Method> commands = Maps.newHashMap();
+	public static final Pattern              commandPattern = Pattern.compile("OwO\\s+(\\S+)\\s*(.*)");
+	public static final Map<Command, Method> commands       = Maps.newHashMap();
 
 	public static void registerCommands() {
 		try {
@@ -55,6 +59,17 @@ public class CommandHandler {
 			OwO.logger.error("Error detecting command register annotation, aborting", e);
 			OwO.exit(OwO.ExitLevel.ERROR);
 		}
+		EventHandler.addListener(MessageReceivedEvent.class, new EventHandler.Listener<MessageReceivedEvent>() {
+			@Override
+			public TransientEvent.ReturnType handle(TransientEvent<MessageReceivedEvent> event) {
+				Matcher m = CommandHandler.commandPattern.matcher(event.event.getMessage().getContent());
+				if (m.find())
+					CommandHandler.findCommand(m.group(1))
+							.ifPresent(c -> CommandHandler.invokeCommand(c, ArgumentBuilder.build(c, event.event.getMessage(), m)));
+				return TransientEvent.ReturnType.DONOTHING;
+			}
+		});
+
 	}
 
 	private static void registerCommand(Command c, Class clazz) {

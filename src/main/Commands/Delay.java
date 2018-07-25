@@ -6,7 +6,8 @@ import javafx.util.Pair;
 import main.Commands.obj.Command;
 import main.Commands.obj.CommandArgument;
 import main.Commands.obj.RegisterCommand;
-import main.Listeners.CommandListenerSingleton;
+import main.Handlers.EventHandler;
+import main.Handlers.TransientEvent;
 import main.OwO;
 import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedEvent;
 import sx.blah.discord.handle.impl.obj.ReactionEmoji;
@@ -19,11 +20,21 @@ import java.util.TimerTask;
 
 @RegisterCommand()
 public class Delay extends Command {
-	public Delay() {
-		super("Delay","delay", Options.class, null);
-	}
-
 	private static Set<Pair<IUser, Integer>> waitingForNext = Sets.newConcurrentHashSet();
+
+	public Delay() {
+		super("Delay", "delay", Options.class, null);
+		EventHandler.addListener(MessageReceivedEvent.class, new EventHandler.Listener<MessageReceivedEvent>() {
+			@Override
+			public TransientEvent.ReturnType handle(TransientEvent<MessageReceivedEvent> event) {
+				if (Delay.popUserIfWaiting(event.event)) {
+					event.setCanceled(true);
+					return TransientEvent.ReturnType.UNSUBSCRIBE;
+				}
+				return TransientEvent.ReturnType.DONOTHING;
+			}
+		});
+	}
 
 	public static boolean popUserIfWaiting(MessageReceivedEvent event) {
 		for (Pair<IUser, Integer> pair : waitingForNext)
@@ -32,7 +43,7 @@ public class Delay extends Command {
 					@Override
 					public void run() {
 						RequestBuffer.request(() -> event.getMessage().removeReaction(OwO.client.getOurUser(), ReactionEmoji.of("⏱")));
-						CommandListenerSingleton.getSingleton().handle(event);
+						EventHandler.onMessage.handle(event);
 					}
 				}, pair.getValue());
 				RequestBuffer.request(() -> event.getMessage().addReaction(ReactionEmoji.of("⏱")));
@@ -51,9 +62,9 @@ public class Delay extends Command {
 
 	public static class Options extends Command.OptionsDefault {
 		@Option(
-				name = "Delay",
-				abbrev = 'd',
-				help = "Delays the execution of another command",
+				name = "Time",
+				abbrev = 't',
+				help = "Time in ms that the next message will be delayed",
 				defaultValue = "1000"
 		)
 		public int delay;

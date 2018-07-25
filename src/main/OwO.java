@@ -2,6 +2,7 @@ package main;
 
 import main.Handlers.ClientHandler;
 import main.Handlers.CommandHandler;
+import main.Handlers.DatabaseHandler;
 import main.Handlers.EventHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +27,7 @@ public class OwO {
 	public static void main(String[] args) {
 		EventHandler.init();
 		CommandHandler.registerCommands();
+		DatabaseHandler.init();
 	}
 
 	public enum ExitLevel {

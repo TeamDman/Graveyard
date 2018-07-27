@@ -2,9 +2,7 @@ package main.Commands.obj;
 
 import com.google.devtools.common.options.Option;
 import com.google.devtools.common.options.OptionsBase;
-import sx.blah.discord.handle.obj.IGuild;
-import sx.blah.discord.handle.obj.IUser;
-import sx.blah.discord.handle.obj.Permissions;
+import sx.blah.discord.handle.obj.*;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -29,16 +27,14 @@ public abstract class Command {
 		this(name, new String[]{command}, optionsClass, perms);
 	}
 
-	//	private Command() {}
-
-	public Class<? extends OptionsDefault> getOptions() {
+	public Class<? extends OptionsDefault> getOptionsClass() {
 		return optionsClass;
 	}
 
-	public boolean hasPerms(IUser user, IGuild guild) {
-		if (!user.getPermissionsForGuild(guild).containsAll(getPerms()))
+	public boolean hasPerms(IUser user, IChannel channel) {
+		if (channel instanceof IPrivateChannel)
 			return false;
-		return true;
+		return user.getPermissionsForGuild(channel.getGuild()).containsAll(getPerms());
 	}
 
 	public EnumSet<Permissions> getPerms() {

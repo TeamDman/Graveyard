@@ -1,12 +1,10 @@
 package main.Handlers;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.devtools.common.options.OptionsParser;
 import eu.infomas.annotation.AnnotationDetector;
-import main.Commands.obj.ArgumentBuilder;
-import main.Commands.obj.Command;
-import main.Commands.obj.CommandArgument;
-import main.Commands.obj.RegisterCommand;
+import main.Commands.obj.*;
 import main.OwO;
 import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedEvent;
 import sx.blah.discord.handle.obj.Permissions;
@@ -15,19 +13,17 @@ import sx.blah.discord.util.RequestBuffer;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.EnumSet;
-import java.util.Map;
+import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class CommandHandler {
-	public static final Pattern              commandPattern = Pattern.compile("OwO\\s+(\\S+)\\s*(.*)");
-	public static final Map<Command, Method> commands       = Maps.newHashMap();
+	public static final  List<Command> commands       = Lists.newArrayList();
+	private static final Pattern       commandPattern = Pattern.compile("OwO\\s+(\\S+)\\s*(.*)");
 
 	public static void registerCommands() {
 		try {
@@ -41,7 +37,7 @@ public class CommandHandler {
 							Command         command   = ((Command) inst);
 							RegisterCommand registrar = ((RegisterCommand) clazz.getAnnotation(annotation));
 							OwO.logger.debug("Found command {} with annotation {}", inst, annotation);
-							registerCommand((Command) inst, clazz);
+							registerCommand(command, clazz);
 						}
 					} catch (Throwable e) {
 						OwO.logger.warn("Exception registering command from " + className, e);
@@ -59,6 +55,7 @@ public class CommandHandler {
 			OwO.logger.error("Error detecting command register annotation, aborting", e);
 			OwO.exit(OwO.ExitLevel.ERROR);
 		}
+
 		EventHandler.addListener(MessageReceivedEvent.class, new EventHandler.Listener<MessageReceivedEvent>() {
 			@Override
 			public TransientEvent.ReturnType handle(TransientEvent<MessageReceivedEvent> event) {
@@ -69,30 +66,24 @@ public class CommandHandler {
 				return TransientEvent.ReturnType.DONOTHING;
 			}
 		});
-
 	}
 
 	private static void registerCommand(Command c, Class clazz) {
 		if (c.name == null)
-			OwO.logger.warn("Command {} is missing a valid name. Skipping", c.name);
+			OwO.logger.warn("Command {} is missing a valid name. Skipping", clazz.getName());
 		else if (c.commands == null || c.commands.length == 0)
 			OwO.logger.warn("Command {} is missing valid commands. Skipping", c.name);
 		else
-			try {
-				Method m = c.getClass().getDeclaredMethod("invoke", ArgumentBuilder.buildEmpty(c).getClass());
-				commands.put(c, m);
-			} catch (NoSuchMethodException e) {
-				OwO.logger.warn("Command {} is missing an invocation method", c.name);
-			}
+			commands.add(c);
 	}
 
-	public static Optional<Command> findCommand(String cmd) {
-		return commands.keySet().stream()
-				.filter(v -> Arrays.stream(v.commands).anyMatch(cmd::equals))
+	private static Optional<Command> findCommand(String cmd) {
+		return commands.stream()
+				.filter(v -> Arrays.asList(v.commands).contains(cmd))
 				.findFirst();
 	}
 
-	public static void invokeCommand(Command c, CommandArgument args) {
+	private static void invokeCommand(Command c, CommandArguments args) {
 		if (args == null) {
 			OwO.logger.warn("Missing arguments object invoking command {}. Skipping", c.name);
 			return;
@@ -102,7 +93,7 @@ public class CommandHandler {
 					.withTitle(c.name)
 					.appendDesc(args.parser.describeOptions(Maps.newHashMap(), OptionsParser.HelpVerbosity.LONG))
 					.build());
-		} else if (!c.hasPerms(args.message.getAuthor(), args.message.getGuild())) {
+		} else if (!c.hasPerms(args.message.getAuthor(), args.message.getChannel())) {
 			EnumSet<Permissions> has = args.message.getAuthor().getPermissionsForGuild(args.message.getGuild());
 			RequestBuffer.request(() ->
 					args.message.getChannel().sendMessage("You are missing permissions for this command.\n"
@@ -112,9 +103,12 @@ public class CommandHandler {
 							.collect(Collectors.joining("\n"))));
 		} else {
 			try {
-				commands.get(c).invoke(c, args);
-			} catch (InvocationTargetException | IllegalAccessException e) {
-				OwO.logger.error("Error executing command '" + c.name + "'", e);
+				if (c instanceof IInvocable)
+					((IInvocable) c).invoke(args);
+				else
+					throw new Exception("Command isn't invocable!");
+			} catch (Throwable e) {
+				OwO.logger.warn("Error executing command '" + c.name + "'", e);
 				args.message.getChannel().sendMessage(new EmbedBuilder()
 						.withTitle("Error executing command")
 						.appendDesc(e.toString())

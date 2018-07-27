@@ -13,12 +13,12 @@ import sx.blah.discord.util.RequestBuilder;
 import java.util.List;
 
 public class PaginatorListener {
-	private IUser             author;
-	private IChannel          channel;
-	private int               index = 0;
-	private IMessage          message;
-	private List<EmbedObject> pages;
-	private ReactionListener  reactionListener;
+	private final IUser             author;
+	private final IChannel          channel;
+	private       int               index = 0;
+	private final IMessage          message;
+	private final List<EmbedObject> pages;
+	private final ReactionListener  reactionListener;
 
 	public PaginatorListener(IMessage source, List<EmbedObject> pages) {
 		this.author = source.getAuthor();
@@ -72,7 +72,7 @@ public class PaginatorListener {
 		RIGHT(ReactionEmoji.of("➡")),
 		STOP(ReactionEmoji.of("❌")),
 		UNKNOWN(null);
-		ReactionEmoji emoji;
+		final ReactionEmoji emoji;
 
 		PageControl(ReactionEmoji emoji) {
 			this.emoji = emoji;

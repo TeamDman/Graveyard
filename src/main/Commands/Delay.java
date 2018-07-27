@@ -4,7 +4,8 @@ import com.google.common.collect.Sets;
 import com.google.devtools.common.options.Option;
 import javafx.util.Pair;
 import main.Commands.obj.Command;
-import main.Commands.obj.CommandArgument;
+import main.Commands.obj.CommandArguments;
+import main.Commands.obj.IInvocable;
 import main.Commands.obj.RegisterCommand;
 import main.Handlers.EventHandler;
 import main.Handlers.TransientEvent;
@@ -18,9 +19,9 @@ import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 
-@RegisterCommand()
-public class Delay extends Command {
-	private static Set<Pair<IUser, Integer>> waitingForNext = Sets.newConcurrentHashSet();
+@RegisterCommand
+public class Delay extends Command implements IInvocable<Delay.Options> {
+	private static final Set<Pair<IUser, Integer>> waitingForNext = Sets.newConcurrentHashSet();
 
 	public Delay() {
 		super("Delay", "delay", Options.class, null);
@@ -54,7 +55,7 @@ public class Delay extends Command {
 	}
 
 	@SuppressWarnings("unused")
-	public void invoke(CommandArgument<Options> args) {
+	public void invoke(CommandArguments<Options> args) {
 		Pair<IUser, Integer> pair = new Pair<>(args.message.getAuthor(), args.options.delay);
 		waitingForNext.add(pair);
 		args.message.getChannel().sendMessage("Your next message's evaluation will be delayed by " + args.options.delay + "ms.");

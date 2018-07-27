@@ -2,24 +2,23 @@ package main.Commands;
 
 import com.google.devtools.common.options.Option;
 import main.Commands.obj.Command;
-import main.Commands.obj.CommandArgument;
+import main.Commands.obj.CommandArguments;
+import main.Commands.obj.IInvocable;
 import main.Commands.obj.RegisterCommand;
-import sx.blah.discord.handle.obj.IGuild;
 import sx.blah.discord.handle.obj.IMessage;
-import sx.blah.discord.handle.obj.IUser;
 import sx.blah.discord.handle.obj.Permissions;
 
 import java.util.EnumSet;
 import java.util.Timer;
 import java.util.TimerTask;
 
-@RegisterCommand()
-public class Ping extends Command {
+@RegisterCommand
+public class Ping extends Command implements IInvocable<Ping.Options> {
 	public Ping() {
 		super("Ping", "ping", Options.class, EnumSet.of(Permissions.SEND_MESSAGES));
 	}
-	@SuppressWarnings("unused")
-	public void invoke(CommandArgument<Options> arg) {
+
+	public void invoke(CommandArguments<Options> arg) {
 		new Timer().schedule(new TimerTask() {
 			@Override
 			public void run() {

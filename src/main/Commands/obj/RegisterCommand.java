@@ -1,7 +1,5 @@
 package main.Commands.obj;
 
-import sx.blah.discord.handle.obj.Permissions;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

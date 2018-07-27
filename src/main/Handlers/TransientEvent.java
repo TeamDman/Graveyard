@@ -3,8 +3,8 @@ package main.Handlers;
 import sx.blah.discord.api.events.Event;
 
 public class TransientEvent<T extends Event> {
-	private boolean canceled = false;
-	public T event;
+	private      boolean canceled = false;
+	public final T       event;
 
 	public TransientEvent(T event) {
 		this.event = event;
@@ -24,6 +24,6 @@ public class TransientEvent<T extends Event> {
 
 	public enum ReturnType {
 		UNSUBSCRIBE,
-		DONOTHING;
+		DONOTHING
 	}
 }

@@ -2,8 +2,6 @@ package main.Handlers;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Queues;
-import main.Commands.Delay;
-import main.Commands.obj.ArgumentBuilder;
 import main.OwO;
 import sx.blah.discord.api.events.Event;
 import sx.blah.discord.api.events.EventDispatcher;
@@ -13,10 +11,9 @@ import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedE
 import java.util.ArrayDeque;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.regex.Matcher;
 
 public class EventHandler {
-	private static HashMap<Class<? extends Event>, ArrayDeque<Listener>> listeners = Maps.newHashMap();
+	private static final HashMap<Class<? extends Event>, ArrayDeque<Listener>> listeners = Maps.newHashMap();
 
 	public static void init() {
 		EventDispatcher dispatcher = OwO.client.getDispatcher();

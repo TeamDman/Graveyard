@@ -34,7 +34,7 @@ public class OwO {
 		ERROR(-1),
 		SUCCESS(0),
 		RESTART(2);
-		public int status;
+		public final int status;
 
 		ExitLevel(int status) {
 			this.status = status;

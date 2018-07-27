@@ -2,21 +2,22 @@ package main.Commands;
 
 import com.google.common.collect.Lists;
 import main.Commands.obj.Command;
-import main.Commands.obj.CommandArgument;
+import main.Commands.obj.CommandArguments;
+import main.Commands.obj.IInvocable;
 import main.Commands.obj.RegisterCommand;
 import main.Listeners.PaginatorListener;
-import sx.blah.discord.handle.obj.IRole;
 import sx.blah.discord.util.EmbedBuilder;
 
 import java.util.stream.Collectors;
 
-@RegisterCommand()
-public class Help extends Command {
+@RegisterCommand
+public class Help extends Command implements IInvocable<Command.OptionsDefault> {
 	public Help() {
-		super("Help",new String[]{"help","info","?"}, null, null);
+		super("Help", new String[]{"help", "info", "?"}, null, null);
 	}
+
 	@SuppressWarnings("unused")
-	public void invoke(CommandArgument<OptionsDefault> args) {
+	public void invoke(CommandArguments<OptionsDefault> args) {
 		//		IMessage msg = args.message.getChannel().sendMessage()
 		PaginatorListener paginator = new PaginatorListener(args.message, Lists.newArrayList(
 				new EmbedBuilder()
@@ -31,10 +32,10 @@ public class Help extends Command {
 						.appendField("Inactive Members", args.message.getGuild().getUsersToBePruned(30) + " inactive users (30 days)", true)
 						.build(),
 				new EmbedBuilder()
-						.withTitle("Role Information ("+args.message.getGuild().getRoles().size() + " roles)")
+						.withTitle("Role Information (" + args.message.getGuild().getRoles().size() + " roles)")
 						.withAuthorIcon(args.message.getAuthor().getAvatarURL())
 						.withAuthorName(args.message.getAuthor().getName())
-						.appendDesc(args.message.getGuild().getRoles().stream().map(r -> "<@&"+r.getStringID()+">").collect(Collectors.joining("\n")))
+						.appendDesc(args.message.getGuild().getRoles().stream().map(r -> "<@&" + r.getStringID() + ">").collect(Collectors.joining("\n")))
 						.build()
 		));
 	}

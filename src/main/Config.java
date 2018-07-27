@@ -49,7 +49,7 @@ public class Config {
 
 	public enum OwOProperty {
 		DISCORD_TOKEN("undefined");
-		Object fallback;
+		final Object fallback;
 
 		OwOProperty(Object fallback) {
 			this.fallback = fallback;

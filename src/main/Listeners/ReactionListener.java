@@ -11,10 +11,10 @@ import java.util.function.Consumer;
 
 public class ReactionListener {
 	private IListener listenerAdd, listenerRemove;
-	private IMessage                      message;
-	private Consumer<ReactionAddEvent>    onAdd;
-	private Consumer<ReactionRemoveEvent> onRemove;
-	private Runnable                      onStop;
+	private final IMessage                      message;
+	private final Consumer<ReactionAddEvent>    onAdd;
+	private final Consumer<ReactionRemoveEvent> onRemove;
+	private final Runnable                      onStop;
 
 
 	public ReactionListener(IMessage message, @Nullable Consumer<ReactionAddEvent> onAdd, @Nullable Consumer<ReactionRemoveEvent> onRemove, @Nullable Runnable onStop) {

@@ -27,6 +27,7 @@ public class OwO {
 	public static void main(String[] args) {
 		EventHandler.init();
 		CommandHandler.registerCommands();
+		CommandHandler.registerListener();
 		DatabaseHandler.init();
 	}
 

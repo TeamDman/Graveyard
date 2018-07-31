@@ -15,18 +15,18 @@ import java.util.regex.Pattern;
 
 public class ArgumentBuilder {
 	@SuppressWarnings("unchecked")
-	public static CommandArguments build(Command cmd, IMessage msg, Matcher m) {
+	public static CommandArguments build(Command cmd, IMessage msg, String body) {
 		try {
 			OptionsParser parser = OptionsParser.newOptionsParser(cmd.getOptionsClass());
 			parser.setAllowResidue(true);
-			parser.parse(preprocess(m.group(2)));
+			parser.parse(preprocess(body));
 			return new CommandArguments(cmd, msg, parser.getOptions(cmd.getOptionsClass()), parser);
 		} catch (OptionsParsingException exOpt) {
 			msg.getChannel().sendMessage(new EmbedBuilder(){{
 				appendField("Command Option Error", exOpt.getLocalizedMessage(), true);
 			}}.build());
 		} catch (Throwable e) {
-			OwO.logger.error("Error encountered invoking command " + cmd.name, e);
+			OwO.logger.warn("Error building arguments for command " + cmd.name, e);
 		}
 		return null;
 	}

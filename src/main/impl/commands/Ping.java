@@ -1,10 +1,7 @@
 package main.impl.commands;
 
 import com.google.devtools.common.options.Option;
-import main.core.command.Command;
-import main.core.command.CommandArguments;
-import main.core.command.IInvocable;
-import main.core.command.RegisterCommand;
+import main.core.command.*;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.Permissions;
 
@@ -15,7 +12,7 @@ import java.util.TimerTask;
 @RegisterCommand
 public class Ping extends Command implements IInvocable<Ping.Options> {
 	public Ping() {
-		super(new Builder("Ping").withOptions(Options.class));
+		super(new Builder("Ping"));
 	}
 
 	public void invoke(CommandArguments<Options> arg) {
@@ -29,6 +26,7 @@ public class Ping extends Command implements IInvocable<Ping.Options> {
 		}, arg.options.delay);
 	}
 
+	@CommandOptions("")
 	public static class Options extends OptionsDefault {
 		@Option(
 				name = "time",

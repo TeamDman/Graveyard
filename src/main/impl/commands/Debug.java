@@ -1,16 +1,15 @@
 package main.impl.commands;
 
+import com.google.devtools.common.options.Converters;
 import com.google.devtools.common.options.Option;
-import main.core.command.Command;
-import main.core.command.CommandArguments;
-import main.core.command.IInvocable;
-import main.core.command.RegisterCommand;
+import javafx.util.StringConverter;
+import main.core.command.*;
 import sx.blah.discord.util.EmbedBuilder;
 
 @RegisterCommand
 public class Debug extends Command implements IInvocable<Debug.Options> {
 	public Debug() {
-		super(new Builder("Debug").withOptions(Options.class));
+		super(new Builder("Debug"));
 	}
 
 	public void invoke(CommandArguments<Options> args) {
@@ -20,9 +19,10 @@ public class Debug extends Command implements IInvocable<Debug.Options> {
 		args.message.getChannel().sendMessage(embed.build());
 	}
 
+	@CommandOptions("-a $ -b $ -c $ -d $")
 	public static class Options extends OptionsDefault {
 		@Option(
-				name = "First",
+				name = "first",
 				abbrev = 'a',
 				help = "A debug flag",
 				defaultValue = ""
@@ -30,7 +30,7 @@ public class Debug extends Command implements IInvocable<Debug.Options> {
 		public String a;
 
 		@Option(
-				name = "Second",
+				name = "second",
 				abbrev = 'b',
 				help = "A debug flag",
 				defaultValue = ""
@@ -38,7 +38,7 @@ public class Debug extends Command implements IInvocable<Debug.Options> {
 		public String b;
 
 		@Option(
-				name = "Third",
+				name = "third",
 				abbrev = 'c',
 				help = "A debug flag",
 				defaultValue = ""
@@ -46,7 +46,7 @@ public class Debug extends Command implements IInvocable<Debug.Options> {
 		public String c;
 
 		@Option(
-				name = "Fourth",
+				name = "fourth",
 				abbrev = 'd',
 				help = "A debug flag",
 				defaultValue = ""

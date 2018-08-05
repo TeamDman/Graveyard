@@ -3,11 +3,7 @@ package main.impl.commands;
 import com.google.common.collect.Lists;
 import com.google.devtools.common.options.Option;
 import com.google.gson.Gson;
-import main.core.command.Command;
-import main.core.command.CommandArguments;
-import main.core.command.IInvocable;
-import main.core.command.RegisterCommand;
-import main.core.handler.CommandHandler;
+import main.core.command.*;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -26,14 +22,13 @@ import java.util.List;
 public class Anilist extends Command implements IInvocable<Anilist.Options> {
 	public Anilist() {
 		super(new Builder("Anilist")
-				.withCommand("anilist")
-				.withOptions(Options.class));
+				.withCommand("anilist"));
 	}
 
 	@Override
 	public void invoke(CommandArguments<Options> args) throws Throwable {
-		if (args.options.name.isEmpty())
-			throw new CommandHandler.MissingOptionException("-u parameter required");
+		assertOption(!args.options.name.isEmpty(), "username parameter required");
+
 		HttpClient          client = HttpClients.createDefault();
 		HttpPost            post   = new HttpPost("https://graphql.anilist.co");
 		List<NameValuePair> params = Lists.newArrayList();
@@ -77,9 +72,10 @@ public class Anilist extends Command implements IInvocable<Anilist.Options> {
 		}
 	}
 
+	@CommandOptions("-u $")
 	public static class Options extends OptionsDefault {
 		@Option(
-				name = "Username",
+				name = "username",
 				abbrev = 'u',
 				help = "The username to display info for",
 				defaultValue = ""
@@ -87,10 +83,6 @@ public class Anilist extends Command implements IInvocable<Anilist.Options> {
 		public String name;
 	}
 
-	//
-	//	class InstanceCreatorForAnilistInfo implements InstanceCreator<AnilistInfo> {
-	//		priv
-	//	}
 	private class AnilistInfo {
 		data data;
 	}

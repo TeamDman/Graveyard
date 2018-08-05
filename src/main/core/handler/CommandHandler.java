@@ -3,6 +3,7 @@ package main.core.handler;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.devtools.common.options.OptionsParser;
+import com.google.devtools.common.options.OptionsParsingException;
 import eu.infomas.annotation.AnnotationDetector;
 import main.core.OwO;
 import main.core.command.*;
@@ -31,6 +32,12 @@ public class CommandHandler {
 						if (inst instanceof Command && annotation == RegisterCommand.class) {
 							Command         command   = ((Command) inst);
 							RegisterCommand registrar = ((RegisterCommand) clazz.getAnnotation(annotation));
+							for (Class inner : clazz.getDeclaredClasses()) {
+								if (inner.isAnnotationPresent(CommandOptions.class)) {
+									command.setOptionsClass(inner);
+									command.setSchema(((CommandOptions) inner.getAnnotation(CommandOptions.class)).value());
+								}
+							}
 							OwO.logger.debug("Found command {} with annotation {}", inst, annotation);
 							registerCommand(command, clazz);
 						}
@@ -54,7 +61,7 @@ public class CommandHandler {
 
 	private static void registerCommand(Command c, Class clazz) {
 		if (!(c instanceof IInvocable))
-			OwO.logger.warn("Command {} does not have an invocation implementation. Skipping", c.name);
+			OwO.logger.warn("Command {} does not have an invocation implementation. Skipping", c.getName());
 		else
 			commands.add(c);
 	}
@@ -67,7 +74,7 @@ public class CommandHandler {
 				Matcher m = commandPattern.matcher(event.event.getMessage().getContent());
 				if (m.find())
 					commands.stream()
-							.filter(v -> v.commands.contains(m.group(1)))
+							.filter(v -> v.getCommands().contains(m.group(1)))
 							.findFirst()
 							.ifPresent(c -> CommandHandler.invokeCommand(c, event.event.getMessage(), m.group(2)));
 				return TransientEvent.ReturnType.DONOTHING;
@@ -76,32 +83,39 @@ public class CommandHandler {
 	}
 
 	private static void invokeCommand(Command c, IMessage msg, String body) {
-		CommandArguments args = ArgumentBuilder.build(c, msg, body);
-		if (args == null) {
-			OwO.logger.warn("Missing arguments object invoking command {}. Skipping", c.name);
-		} else if (args.options.help) {
-			args.message.getChannel().sendMessage(new EmbedBuilder()
-					.withTitle(c.name)
-					.appendDesc(args.parser.describeOptions(Maps.newHashMap(), OptionsParser.HelpVerbosity.LONG))
-					.build());
-		} else {
-			try {
+		try {
+			CommandArguments args = ArgumentBuilder.build(c, msg, body);
+			if (args.options.help) {
+				args.message.getChannel().sendMessage(new EmbedBuilder()
+						.withTitle(c.getName())
+						.appendField("Options Info", args.parser.describeOptions(Maps.newHashMap(), OptionsParser.HelpVerbosity.LONG), false)
+						.appendField("Options Schema", c.getSchema().length() == 0 ? "No schema" : c.getSchema(), false)
+						.build());
+			} else {
 				c.assertPermissions(args);
 				if (c instanceof IInvocable)
 					((IInvocable) c).invoke(args);
 				else
 					throw new NoSuchMethodException("Command is missing an invocation method!");
-			} catch (InvalidPermissionsException e) {
-				RequestBuffer.request(() -> args.message.getChannel().sendMessage(e.toString()));
-
-			} catch (Throwable e) {
-				OwO.logger.warn("Error executing command '" + c.name + "'", e);
-				args.message.getChannel().sendMessage(new EmbedBuilder()
-						.withTitle("Error executing command")
-						.appendDesc(e.toString())
-						.build()
-				);
 			}
+		} catch (OptionsParsingException e) {
+			OwO.logger.warn("Error getting options for command '" + c.getName() + "'", e);
+			RequestBuffer.request(() -> msg.getChannel().sendMessage(new EmbedBuilder()
+					.appendField("Command Option Error", e.getLocalizedMessage(), true)
+					.build()));
+		} catch (InvalidOptionException e) {
+			RequestBuffer.request(() -> msg.getChannel().sendMessage(new EmbedBuilder()
+					.appendField("InvalidOptionException", e.getMessage(), false)
+					.appendDesc("See `" + c.getName().toLowerCase() + " --help` for usage details.")
+					.build()));
+		} catch (InvalidPermissionsException e) {
+			RequestBuffer.request(() -> msg.getChannel().sendMessage(e.toString()));
+		} catch (Throwable e) {
+			OwO.logger.warn("Error executing command '" + c.getName() + "'", e);
+			RequestBuffer.request(() -> msg.getChannel().sendMessage(new EmbedBuilder()
+					.withTitle("Error executing command")
+					.appendDesc(e.toString())
+					.build()));
 		}
 	}
 
@@ -118,14 +132,14 @@ public class CommandHandler {
 		}
 	}
 
-	public static class MissingOptionException extends Exception {
-		public MissingOptionException(String message) {
+	public static class InvalidOptionException extends Exception {
+		public InvalidOptionException(String message) {
 			super(message);
 		}
 
 		@Override
 		public String toString() {
-			String s       = "MissingOptionException";
+			String s       = "InvalidOptionException";
 			String message = getLocalizedMessage();
 			return (message != null) ? (s + ": " + message) : s;
 		}

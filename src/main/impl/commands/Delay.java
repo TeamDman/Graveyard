@@ -3,10 +3,7 @@ package main.impl.commands;
 import com.google.common.collect.Sets;
 import com.google.devtools.common.options.Option;
 import javafx.util.Pair;
-import main.core.command.Command;
-import main.core.command.CommandArguments;
-import main.core.command.IInvocable;
-import main.core.command.RegisterCommand;
+import main.core.command.*;
 import main.core.handler.EventHandler;
 import main.core.handler.TransientEvent;
 import main.core.OwO;
@@ -24,7 +21,7 @@ public class Delay extends Command implements IInvocable<Delay.Options> {
 	private static final Set<Pair<IUser, Integer>> waitingForNext = Sets.newConcurrentHashSet();
 
 	public Delay() {
-		super(new Builder("Delay").withOptions(Options.class));
+		super(new Builder("Delay"));
 		EventHandler.addListener(MessageReceivedEvent.class, new EventHandler.Listener<MessageReceivedEvent>() {
 			@Override
 			public TransientEvent.ReturnType handle(TransientEvent<MessageReceivedEvent> event) {
@@ -61,9 +58,10 @@ public class Delay extends Command implements IInvocable<Delay.Options> {
 		args.message.getChannel().sendMessage("Your next message's evaluation will be delayed by " + args.options.delay + "ms.");
 	}
 
+	@CommandOptions("")
 	public static class Options extends Command.OptionsDefault {
 		@Option(
-				name = "Time",
+				name = "time",
 				abbrev = 't',
 				help = "Time in ms that the next message will be delayed",
 				defaultValue = "1000"

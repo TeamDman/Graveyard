@@ -1,12 +1,11 @@
-package main.Handlers;
+package main.core.handler;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.devtools.common.options.OptionsParser;
-import com.google.gson.Gson;
 import eu.infomas.annotation.AnnotationDetector;
-import main.Commands.obj.*;
-import main.OwO;
+import main.core.OwO;
+import main.core.command.*;
 import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedEvent;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.util.EmbedBuilder;
@@ -14,7 +13,6 @@ import sx.blah.discord.util.RequestBuffer;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
-import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -47,7 +45,7 @@ public class CommandHandler {
 					return new Class[]{RegisterCommand.class};
 				}
 
-			}).detect("main.Commands");
+			}).detect();
 		} catch (IOException e) {
 			OwO.logger.error("Error detecting command register annotation, aborting", e);
 			OwO.exit(OwO.ExitLevel.ERROR);
@@ -55,11 +53,7 @@ public class CommandHandler {
 	}
 
 	private static void registerCommand(Command c, Class clazz) {
-		if (c.name == null)
-			OwO.logger.warn("Command {} is missing a valid name. Skipping", clazz.getName());
-		else if (c.commands == null || c.commands.length == 0)
-			OwO.logger.warn("Command {} is missing valid commands. Skipping", c.name);
-		else if (!(c instanceof IInvocable))
+		if (!(c instanceof IInvocable))
 			OwO.logger.warn("Command {} does not have an invocation implementation. Skipping", c.name);
 		else
 			commands.add(c);
@@ -73,7 +67,7 @@ public class CommandHandler {
 				Matcher m = commandPattern.matcher(event.event.getMessage().getContent());
 				if (m.find())
 					commands.stream()
-							.filter(v -> Arrays.asList(v.commands).contains(m.group(1)))
+							.filter(v -> v.commands.contains(m.group(1)))
 							.findFirst()
 							.ifPresent(c -> CommandHandler.invokeCommand(c, event.event.getMessage(), m.group(2)));
 				return TransientEvent.ReturnType.DONOTHING;
@@ -118,7 +112,7 @@ public class CommandHandler {
 
 		@Override
 		public String toString() {
-			String s = "InvalidPermissionsException";
+			String s       = "InvalidPermissionsException";
 			String message = getLocalizedMessage();
 			return (message != null) ? (s + ": " + message) : s;
 		}
@@ -131,7 +125,7 @@ public class CommandHandler {
 
 		@Override
 		public String toString() {
-			String s = "MissingOptionException";
+			String s       = "MissingOptionException";
 			String message = getLocalizedMessage();
 			return (message != null) ? (s + ": " + message) : s;
 		}

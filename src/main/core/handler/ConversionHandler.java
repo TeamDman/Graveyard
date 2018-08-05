@@ -1,7 +1,7 @@
-package main.Handlers;
+package main.core.handler;
 
 import com.google.devtools.common.options.Converter;
-import main.OwO;
+import main.core.OwO;
 import sx.blah.discord.handle.obj.IChannel;
 
 import java.util.regex.Matcher;

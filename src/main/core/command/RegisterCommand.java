@@ -1,4 +1,4 @@
-package main.Commands.obj;
+package main.core.command;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

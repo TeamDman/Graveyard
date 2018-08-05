@@ -1,4 +1,4 @@
-package main.Handlers;
+package main.core.handler;
 
 import sx.blah.discord.api.events.Event;
 

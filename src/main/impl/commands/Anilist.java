@@ -1,13 +1,13 @@
-package main.Commands;
+package main.impl.commands;
 
 import com.google.common.collect.Lists;
 import com.google.devtools.common.options.Option;
 import com.google.gson.Gson;
-import main.Commands.obj.Command;
-import main.Commands.obj.CommandArguments;
-import main.Commands.obj.IInvocable;
-import main.Commands.obj.RegisterCommand;
-import main.Handlers.CommandHandler;
+import main.core.command.Command;
+import main.core.command.CommandArguments;
+import main.core.command.IInvocable;
+import main.core.command.RegisterCommand;
+import main.core.handler.CommandHandler;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -24,9 +24,10 @@ import java.util.List;
 
 @RegisterCommand
 public class Anilist extends Command implements IInvocable<Anilist.Options> {
-
 	public Anilist() {
-		super("Anilist", "anilist", Options.class, null);
+		super(new Builder("Anilist")
+				.withCommand("anilist")
+				.withOptions(Options.class));
 	}
 
 	@Override
@@ -63,9 +64,9 @@ public class Anilist extends Command implements IInvocable<Anilist.Options> {
 		HttpEntity   entity = resp.getEntity();
 		if (entity != null) {
 			try (InputStream in = entity.getContent()) {
-				String strResp = IOUtils.toString(in, "UTF-8");
-				Gson        gson = new Gson();
-				AnilistInfo info = gson.fromJson(strResp, AnilistInfo.class);
+				String      strResp = IOUtils.toString(in, "UTF-8");
+				Gson        gson    = new Gson();
+				AnilistInfo info    = gson.fromJson(strResp, AnilistInfo.class);
 				args.message.getChannel().sendMessage(new EmbedBuilder()
 						.withTitle(args.options.name + "'s AniList Info")
 						.withImage(info.data.User.avatar.large)
@@ -85,6 +86,7 @@ public class Anilist extends Command implements IInvocable<Anilist.Options> {
 		)
 		public String name;
 	}
+
 	//
 	//	class InstanceCreatorForAnilistInfo implements InstanceCreator<AnilistInfo> {
 	//		priv
@@ -93,26 +95,27 @@ public class Anilist extends Command implements IInvocable<Anilist.Options> {
 		data data;
 	}
 
-	private class data {
-		User User;
-	}
-
 	private class User {
-		int id;
+		avatar avatar;
+		int    id;
+		String moderatorStatus;
 		String name;
 		String siteUrl;
-		String moderatorStatus;
-		avatar avatar;
-		stats stats;
+		stats  stats;
 	}
 
 	private class avatar {
 		String large;
 	}
+
+	private class data {
+		User User;
+	}
+
 	private class stats {
-		int watchedTime;
-		int chaptersRead;
 		int[] animeListScores;
+		int   chaptersRead;
 		int[] mangaListScores;
+		int   watchedTime;
 	}
 }

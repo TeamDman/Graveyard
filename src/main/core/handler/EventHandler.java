@@ -1,8 +1,8 @@
-package main.Handlers;
+package main.core.handler;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Queues;
-import main.OwO;
+import main.core.OwO;
 import sx.blah.discord.api.events.Event;
 import sx.blah.discord.api.events.EventDispatcher;
 import sx.blah.discord.api.events.EventSubscriber;

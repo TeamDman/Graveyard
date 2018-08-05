@@ -1,7 +1,7 @@
-package main.Handlers;
+package main.core.handler;
 
-import main.Config;
-import main.OwO;
+import main.core.Config;
+import main.core.OwO;
 import sx.blah.discord.api.ClientBuilder;
 import sx.blah.discord.api.IDiscordClient;
 import sx.blah.discord.util.DiscordException;

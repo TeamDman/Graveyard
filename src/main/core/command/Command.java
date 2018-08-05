@@ -1,33 +1,26 @@
-package main.Commands.obj;
+package main.core.command;
 
+import com.google.common.collect.Lists;
 import com.google.devtools.common.options.Option;
 import com.google.devtools.common.options.OptionsBase;
-import main.Handlers.CommandHandler;
+import main.core.handler.CommandHandler;
 import sx.blah.discord.handle.obj.IPrivateChannel;
 import sx.blah.discord.handle.obj.Permissions;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.EnumSet;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public abstract class Command {
-	public String[]                        commands;
+	public List<String>                    commands;
 	public String                          name;
 	public Class<? extends OptionsDefault> optionsClass;
 	public EnumSet<Permissions>            perms;
 
-	public Command(@Nonnull String name, String command, @Nullable Class<? extends OptionsDefault> optionsClass, @Nullable EnumSet<Permissions> perms) {
-		this(name, new String[]{command}, optionsClass, perms);
-	}
-
-	public Command(@Nonnull String name, @Nonnull String[] commands, @Nullable Class<? extends OptionsDefault> optionsClass, @Nullable EnumSet<Permissions> perms) {
-		if (commands.length == 0)
-			throw new IllegalArgumentException("Commands must not be empty");
-		this.name = name;
-		this.commands = commands;
-		this.optionsClass = optionsClass == null ? OptionsDefault.class : optionsClass;
-		this.perms = perms == null ? EnumSet.noneOf(Permissions.class) : perms;
+	public Command(Builder builder) {
+		this.commands = builder.commands;
+		this.optionsClass = builder.optionsClass;
+		this.perms = builder.perms;
 	}
 
 	public Class<? extends OptionsDefault> getOptionsClass() {
@@ -36,7 +29,7 @@ public abstract class Command {
 
 	public void assertPermissions(CommandArguments args) throws CommandHandler.InvalidPermissionsException {
 		if (args.message.getChannel() instanceof IPrivateChannel)
-			throw new CommandHandler.InvalidPermissionsException("Commands aren't supported in private channels");
+			throw new CommandHandler.InvalidPermissionsException("commands aren't supported in private channels");
 		EnumSet<Permissions> has = args.message.getAuthor().getPermissionsForGuild(args.message.getGuild());
 		if (!has.containsAll(getPerms())) {
 			String msg = "You are missing permissions for this command.\n" + getPerms().stream()
@@ -49,6 +42,38 @@ public abstract class Command {
 
 	public EnumSet<Permissions> getPerms() {
 		return perms;
+	}
+
+	public static class Builder {
+		public List<String>                    commands     = Lists.newArrayList();
+		public String                          name;
+		public Class<? extends OptionsDefault> optionsClass = OptionsDefault.class;
+		public EnumSet<Permissions>            perms        = EnumSet.noneOf(Permissions.class);
+
+		public Builder(String name) {
+			this.name = name;
+			commands.add(name.toLowerCase());
+		}
+
+		public Builder withCommand(String command) {
+			commands.add(command.toLowerCase());
+			return this;
+		}
+
+		public Builder withOptions(Class<? extends OptionsDefault> clazz) {
+			this.optionsClass = clazz;
+			return this;
+		}
+
+		public Builder withPermissions(EnumSet<Permissions> perms) {
+			this.perms = perms;
+			return this;
+		}
+
+		public Builder withPermission(Permissions perm) {
+			perms.add(perm);
+			return this;
+		}
 	}
 
 	public static class OptionsDefault extends OptionsBase {

@@ -1,4 +1,4 @@
-package main.Commands.obj;
+package main.core.command;
 
 import java.util.function.Predicate;
 

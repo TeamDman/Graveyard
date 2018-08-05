@@ -1,4 +1,4 @@
-package main.Commands.obj;
+package main.core.command;
 
 import com.google.devtools.common.options.OptionsParser;
 import sx.blah.discord.handle.obj.IMessage;

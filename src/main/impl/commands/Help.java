@@ -1,11 +1,11 @@
-package main.Commands;
+package main.impl.commands;
 
 import com.google.common.collect.Lists;
-import main.Commands.obj.Command;
-import main.Commands.obj.CommandArguments;
-import main.Commands.obj.IInvocable;
-import main.Commands.obj.RegisterCommand;
-import main.Listeners.PaginatorListener;
+import main.core.command.Command;
+import main.core.command.CommandArguments;
+import main.core.command.IInvocable;
+import main.core.command.RegisterCommand;
+import main.core.listener.PaginatorListener;
 import sx.blah.discord.util.EmbedBuilder;
 
 import java.util.stream.Collectors;
@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 @RegisterCommand
 public class Help extends Command implements IInvocable<Command.OptionsDefault> {
 	public Help() {
-		super("Help", new String[]{"help", "info", "?"}, null, null);
+		super(new Builder("Help").withCommand("?").withCommand("info"));
 	}
 
 	@SuppressWarnings("unused")

@@ -1,18 +1,18 @@
-package main.Commands;
+package main.impl.commands;
 
 import com.google.devtools.common.options.Option;
-import main.Commands.obj.Command;
-import main.Commands.obj.CommandArguments;
-import main.Commands.obj.IInvocable;
-import main.Commands.obj.RegisterCommand;
-import main.Handlers.ConversionHandler;
+import main.core.command.Command;
+import main.core.command.CommandArguments;
+import main.core.command.IInvocable;
+import main.core.command.RegisterCommand;
+import main.core.handler.ConversionHandler;
 import sx.blah.discord.handle.obj.IChannel;
 import sx.blah.discord.handle.obj.Permissions;
 
 @RegisterCommand
 public class Say extends Command implements IInvocable<Say.Options> {
 	public Say() {
-		super("Say","say", Options.class, null);
+		super(new Builder("Say").withOptions(Options.class));
 	}
 
 

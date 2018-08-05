@@ -1,10 +1,10 @@
-package main.Commands;
+package main.impl.commands;
 
 import com.google.devtools.common.options.Option;
-import main.Commands.obj.Command;
-import main.Commands.obj.CommandArguments;
-import main.Commands.obj.IInvocable;
-import main.Commands.obj.RegisterCommand;
+import main.core.command.Command;
+import main.core.command.CommandArguments;
+import main.core.command.IInvocable;
+import main.core.command.RegisterCommand;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.Permissions;
 
@@ -15,7 +15,7 @@ import java.util.TimerTask;
 @RegisterCommand
 public class Ping extends Command implements IInvocable<Ping.Options> {
 	public Ping() {
-		super("Ping", "ping", Options.class, EnumSet.of(Permissions.SEND_MESSAGES));
+		super(new Builder("Ping").withOptions(Options.class));
 	}
 
 	public void invoke(CommandArguments<Options> arg) {

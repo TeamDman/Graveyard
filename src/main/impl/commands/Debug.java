@@ -1,16 +1,16 @@
-package main.Commands;
+package main.impl.commands;
 
 import com.google.devtools.common.options.Option;
-import main.Commands.obj.Command;
-import main.Commands.obj.CommandArguments;
-import main.Commands.obj.IInvocable;
-import main.Commands.obj.RegisterCommand;
+import main.core.command.Command;
+import main.core.command.CommandArguments;
+import main.core.command.IInvocable;
+import main.core.command.RegisterCommand;
 import sx.blah.discord.util.EmbedBuilder;
 
 @RegisterCommand
 public class Debug extends Command implements IInvocable<Debug.Options> {
 	public Debug() {
-		super("Debug", "debug", Options.class, null);
+		super(new Builder("Debug").withOptions(Options.class));
 	}
 
 	public void invoke(CommandArguments<Options> args) {

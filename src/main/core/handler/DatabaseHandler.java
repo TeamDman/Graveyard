@@ -1,6 +1,6 @@
-package main.Handlers;
+package main.core.handler;
 
-import main.OwO;
+import main.core.OwO;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

@@ -1,15 +1,15 @@
-package main.Commands;
+package main.impl.commands;
 
 import com.google.common.collect.Sets;
 import com.google.devtools.common.options.Option;
 import javafx.util.Pair;
-import main.Commands.obj.Command;
-import main.Commands.obj.CommandArguments;
-import main.Commands.obj.IInvocable;
-import main.Commands.obj.RegisterCommand;
-import main.Handlers.EventHandler;
-import main.Handlers.TransientEvent;
-import main.OwO;
+import main.core.command.Command;
+import main.core.command.CommandArguments;
+import main.core.command.IInvocable;
+import main.core.command.RegisterCommand;
+import main.core.handler.EventHandler;
+import main.core.handler.TransientEvent;
+import main.core.OwO;
 import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedEvent;
 import sx.blah.discord.handle.impl.obj.ReactionEmoji;
 import sx.blah.discord.handle.obj.IUser;
@@ -24,7 +24,7 @@ public class Delay extends Command implements IInvocable<Delay.Options> {
 	private static final Set<Pair<IUser, Integer>> waitingForNext = Sets.newConcurrentHashSet();
 
 	public Delay() {
-		super("Delay", "delay", Options.class, null);
+		super(new Builder("Delay").withOptions(Options.class));
 		EventHandler.addListener(MessageReceivedEvent.class, new EventHandler.Listener<MessageReceivedEvent>() {
 			@Override
 			public TransientEvent.ReturnType handle(TransientEvent<MessageReceivedEvent> event) {

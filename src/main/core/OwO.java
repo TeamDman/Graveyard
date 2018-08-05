@@ -1,9 +1,9 @@
-package main;
+package main.core;
 
-import main.Handlers.ClientHandler;
-import main.Handlers.CommandHandler;
-import main.Handlers.DatabaseHandler;
-import main.Handlers.EventHandler;
+import main.core.handler.ClientHandler;
+import main.core.handler.CommandHandler;
+import main.core.handler.DatabaseHandler;
+import main.core.handler.EventHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.api.IDiscordClient;

@@ -1,6 +1,6 @@
-package main.Listeners;
+package main.core.listener;
 
-import main.OwO;
+import main.core.OwO;
 import sx.blah.discord.api.events.IListener;
 import sx.blah.discord.handle.impl.events.guild.channel.message.reaction.ReactionAddEvent;
 import sx.blah.discord.handle.impl.events.guild.channel.message.reaction.ReactionRemoveEvent;

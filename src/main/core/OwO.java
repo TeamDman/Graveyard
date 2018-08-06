@@ -4,6 +4,7 @@ import main.core.handler.ClientHandler;
 import main.core.handler.CommandHandler;
 import main.core.handler.DatabaseHandler;
 import main.core.handler.EventHandler;
+import main.impl.handler.IdleRPGHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.api.IDiscordClient;
@@ -25,9 +26,9 @@ public class OwO {
 
 	public static void main(String[] args) {
 		EventHandler.init();
-		CommandHandler.registerCommands();
-		CommandHandler.registerListener();
+		CommandHandler.init();
 		DatabaseHandler.init();
+		IdleRPGHandler.init();
 	}
 
 	public enum ExitLevel {

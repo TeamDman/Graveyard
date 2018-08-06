@@ -21,7 +21,12 @@ import java.util.regex.Pattern;
 public class CommandHandler {
 	public static final List<Command> commands = Lists.newArrayList();
 
-	public static void registerCommands() {
+	public static void init() {
+		registerCommands();
+		registerListener();
+	}
+
+	private static void registerCommands() {
 		try {
 			new AnnotationDetector(new AnnotationDetector.TypeReporter() {
 				@Override
@@ -66,7 +71,7 @@ public class CommandHandler {
 			commands.add(c);
 	}
 
-	public static void registerListener() {
+	private static void registerListener() {
 		final Pattern commandPattern = Pattern.compile("OwO\\s+(\\S+)\\s*(.*)");
 		EventHandler.addListener(MessageReceivedEvent.class, new EventHandler.Listener<MessageReceivedEvent>() {
 			@Override

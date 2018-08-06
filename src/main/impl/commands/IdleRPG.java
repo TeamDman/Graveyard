@@ -1,11 +1,13 @@
 package main.impl.commands;
 
-import com.google.devtools.common.options.OptionsBase;
 import main.core.command.Command;
 import main.core.command.CommandArguments;
 import main.core.command.IInvocable;
 import main.core.command.RegisterCommand;
 import main.core.handler.DatabaseHandler;
+import main.impl.handler.IdleRPGHandler;
+import sx.blah.discord.util.EmbedBuilder;
+import sx.blah.discord.util.RequestBuffer;
 
 @RegisterCommand
 public class IdleRPG extends Command implements IInvocable<IdleRPG.Options> {
@@ -15,7 +17,14 @@ public class IdleRPG extends Command implements IInvocable<IdleRPG.Options> {
 
 	@Override
 	public void invoke(CommandArguments<Options> args) throws Throwable {
-		DatabaseHandler.insert(args.message.getAuthor(),args.message.getGuild());
+		IdleRPGHandler.User user = DatabaseHandler.getUser(args.message.getAuthor());
+		RequestBuffer.request(() -> args.message.getChannel().sendMessage(new EmbedBuilder()
+				.withTitle("IdleRPG")
+				.withAuthorIcon(args.message.getAuthor().getAvatarURL())
+				.withAuthorName(args.message.getAuthor().getName())
+				.appendDesc("Level: " + user.level)
+				.appendDesc("\nNext Levelup: " + IdleRPGHandler.deltaLevelup(user.levelup) + " seconds")
+				.build()));
 	}
 
 

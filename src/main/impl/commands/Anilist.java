@@ -14,6 +14,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import sx.blah.discord.util.EmbedBuilder;
+import sx.blah.discord.util.RequestBuffer;
 
 import java.io.InputStream;
 import java.util.List;
@@ -22,7 +23,8 @@ import java.util.List;
 public class Anilist extends Command implements IInvocable<Anilist.Options> {
 	public Anilist() {
 		super(new Builder("Anilist")
-				.withCommand("anilist"));
+				.withCommand("anilist")
+		.withSchema("-u $"));
 	}
 
 	@Override
@@ -62,17 +64,22 @@ public class Anilist extends Command implements IInvocable<Anilist.Options> {
 				String      strResp = IOUtils.toString(in, "UTF-8");
 				Gson        gson    = new Gson();
 				AnilistInfo info    = gson.fromJson(strResp, AnilistInfo.class);
-				args.message.getChannel().sendMessage(new EmbedBuilder()
+				RequestBuffer.request(() -> args.message.getChannel().sendMessage(new EmbedBuilder()
 						.withTitle(args.options.name + "'s AniList Info")
-						.withImage(info.data.User.avatar.large)
+						.withThumbnail(info.data.User.avatar.large)
+						.withUrl(info.data.User.siteUrl)
+						.appendDesc("User ID: " + info.data.User.id + "\n")
+						.appendDesc("Watched time: " + info.data.User.stats.watchedTime + " minutes\n")
+//						.withDescription(info.data.User.stats.animeListScores.length + " items in anime list")
+//						.withDescription(info.data.User.stats.mangaListScores.length + " items in manga list")
+						.appendDesc("Chapters read: " + info.data.User.stats.chaptersRead)
 						.build()
-				);
-				//				args.message.getChannel().sendMessage(IOUtils.toString(in, "UTF-8"));
+				));
 			}
 		}
 	}
 
-	@CommandOptions("-u $")
+	@CommandOptions
 	public static class Options extends OptionsDefault {
 		@Option(
 				name = "username",

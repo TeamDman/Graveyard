@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
 
 public class ConversionHandler {
 	public static class ChannelConverter implements Converter<IChannel> {
-		Pattern channelPattern = Pattern.compile("(\\d+)");
+		final Pattern channelPattern = Pattern.compile("(\\d+)");
 
 		@Override
 		public IChannel convert(String input) {

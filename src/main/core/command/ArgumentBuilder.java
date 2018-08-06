@@ -37,20 +37,22 @@ public class ArgumentBuilder {
 				matchList.add(regexMatcher.group());
 			}
 		}
-		if (!schema.isEmpty() && !matchList.stream().anyMatch(s -> s.startsWith("-"))) {
+		if (!schema.isEmpty() && matchList.stream().noneMatch(s -> s.startsWith("-"))) {
 			if (matchList.size() < StringUtils.countMatches(schema, "$"))
 				throw new CommandHandler.InvalidOptionException("Not enough arguments to satisfy the schema.");
 			ArrayList<String> schemaList = Lists.newArrayList(schema.split("\\s+"));
 			Iterator<String>  iter       = matchList.iterator();
 			schemaList.replaceAll(s -> {
-				if (s.equals("$"))
-					return iter.next();
-				else if (s.equals("...")) {
-					StringBuilder b = new StringBuilder();
-					iter.forEachRemaining(b::append);
-					return b.toString();
-				} else
-					return s;
+				switch (s) {
+					case "$":
+						return iter.next();
+					case "...":
+						StringBuilder b = new StringBuilder();
+						iter.forEachRemaining(b::append);
+						return b.toString();
+					default:
+						return s;
+				}
 			});
 			return schemaList;
 		}

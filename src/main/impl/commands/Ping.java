@@ -3,9 +3,8 @@ package main.impl.commands;
 import com.google.devtools.common.options.Option;
 import main.core.command.*;
 import sx.blah.discord.handle.obj.IMessage;
-import sx.blah.discord.handle.obj.Permissions;
+import sx.blah.discord.util.RequestBuffer;
 
-import java.util.EnumSet;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -19,32 +18,18 @@ public class Ping extends Command implements IInvocable<Ping.Options> {
 		new Timer().schedule(new TimerTask() {
 			@Override
 			public void run() {
-				IMessage msg = arg.message.getChannel().sendMessage(arg.options.mention ? arg.message.getAuthor().mention() : "Pong!");
-				if (arg.options.time)
-					msg.edit("Ping! Latency is " + (msg.getTimestamp().toEpochMilli() - arg.message.getTimestamp().toEpochMilli()) + "ms");
+				RequestBuffer.request(() -> {
+					IMessage msg = arg.message.getChannel().sendMessage(arg.options.mention ? arg.message.getAuthor().mention() : "Pong!");
+					if (arg.options.time) {
+						msg.edit("Ping! Latency is " + (msg.getTimestamp().toEpochMilli() - arg.message.getTimestamp().toEpochMilli()) + "ms");
+					}
+				});
 			}
 		}, arg.options.delay);
 	}
 
-	@CommandOptions("")
+	@CommandOptions
 	public static class Options extends OptionsDefault {
-		@Option(
-				name = "time",
-				abbrev = 't',
-				help = "Displays the response time in ms.",
-				defaultValue = "false"
-		)
-		public boolean time;
-
-		@Option(
-				name = "mention",
-				abbrev = 'm',
-				help = "Makes the bot mention you.",
-				defaultValue = "false"
-		)
-		public boolean mention;
-
-
 		@Option(
 				name = "delay",
 				abbrev = 'd',
@@ -52,5 +37,19 @@ public class Ping extends Command implements IInvocable<Ping.Options> {
 				defaultValue = "0"
 		)
 		public int delay;
+		@Option(
+				name = "mention",
+				abbrev = 'm',
+				help = "Makes the bot mention you.",
+				defaultValue = "false"
+		)
+		public boolean mention;
+		@Option(
+				name = "time",
+				abbrev = 't',
+				help = "Displays the response time in ms.",
+				defaultValue = "false"
+		)
+		public boolean time;
 	}
 }

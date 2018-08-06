@@ -22,7 +22,7 @@ public class EventHandler {
 
 	public static void addListener(Class<? extends Event> event, Listener listener) {
 		listeners.computeIfAbsent(event, k -> Queues.newArrayDeque());
-		listeners.get(event).addLast(listener);
+		listeners.get(event).addFirst(listener);
 	}
 
 	public abstract static class Listener<T extends Event> {

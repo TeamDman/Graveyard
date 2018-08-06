@@ -24,6 +24,7 @@ public abstract class Command {
 		this.name = builder.name;
 		this.commands = builder.commands;
 		this.perms = builder.perms;
+		this.schema = builder.schema;
 	}
 
 	public List<String> getCommands() {
@@ -77,6 +78,7 @@ public abstract class Command {
 		public List<String>         commands = Lists.newArrayList();
 		public String               name;
 		public EnumSet<Permissions> perms    = EnumSet.noneOf(Permissions.class);
+		public String               schema = "";
 
 		public Builder(String name) {
 			this.name = name;
@@ -90,6 +92,11 @@ public abstract class Command {
 
 		public Builder withPermissions(EnumSet<Permissions> perms) {
 			this.perms = perms;
+			return this;
+		}
+
+		public Builder withSchema(String schema) {
+			this.schema = schema;
 			return this;
 		}
 

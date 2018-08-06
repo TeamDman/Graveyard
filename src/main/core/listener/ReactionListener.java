@@ -1,23 +1,24 @@
 package main.core.listener;
 
 import main.core.OwO;
+import main.core.handler.TransientEvent;
 import sx.blah.discord.api.events.IListener;
 import sx.blah.discord.handle.impl.events.guild.channel.message.reaction.ReactionAddEvent;
 import sx.blah.discord.handle.impl.events.guild.channel.message.reaction.ReactionRemoveEvent;
 import sx.blah.discord.handle.obj.IMessage;
 
 import javax.annotation.Nullable;
-import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class ReactionListener {
-	private IListener listenerAdd, listenerRemove;
-	private final IMessage                      message;
-	private final Consumer<ReactionAddEvent>    onAdd;
-	private final Consumer<ReactionRemoveEvent> onRemove;
-	private final Runnable                      onStop;
+	private final IMessage                                                 message;
+	private final Function<ReactionAddEvent, TransientEvent.ReturnType>    onAdd;
+	private final Function<ReactionRemoveEvent, TransientEvent.ReturnType> onRemove;
+	private final Runnable                                                 onStop;
+	private       IListener                                                listenerAdd, listenerRemove;
 
 
-	public ReactionListener(IMessage message, @Nullable Consumer<ReactionAddEvent> onAdd, @Nullable Consumer<ReactionRemoveEvent> onRemove, @Nullable Runnable onStop) {
+	public ReactionListener(IMessage message, @Nullable Function<ReactionAddEvent, TransientEvent.ReturnType> onAdd, @Nullable Function<ReactionRemoveEvent, TransientEvent.ReturnType> onRemove, @Nullable Runnable onStop) {
 		this.message = message;
 		this.onAdd = onAdd;
 		this.onRemove = onRemove;
@@ -42,14 +43,16 @@ public class ReactionListener {
 	private class AddListener implements IListener<ReactionAddEvent> {
 		@Override
 		public void handle(ReactionAddEvent event) {
-			onAdd.accept(event);
+			if (onAdd.apply(event) == TransientEvent.ReturnType.UNSUBSCRIBE)
+				dispose();
 		}
 	}
 
 	private class RemoveListener implements IListener<ReactionRemoveEvent> {
 		@Override
 		public void handle(ReactionRemoveEvent event) {
-			onRemove.accept(event);
+			if (onRemove.apply(event) == TransientEvent.ReturnType.UNSUBSCRIBE)
+				dispose();
 		}
 	}
 }

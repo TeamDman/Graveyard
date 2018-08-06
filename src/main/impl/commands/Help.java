@@ -18,7 +18,6 @@ public class Help extends Command implements IInvocable<Command.OptionsDefault> 
 
 	@SuppressWarnings("unused")
 	public void invoke(CommandArguments<OptionsDefault> args) {
-		//		IMessage msg = args.message.getChannel().sendMessage()
 		PaginatorListener paginator = new PaginatorListener(args.message, Lists.newArrayList(
 				new EmbedBuilder()
 						.withTitle(args.message.getGuild().getName() + " Information")

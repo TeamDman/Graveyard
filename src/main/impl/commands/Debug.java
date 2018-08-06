@@ -1,25 +1,24 @@
 package main.impl.commands;
 
-import com.google.devtools.common.options.Converters;
 import com.google.devtools.common.options.Option;
-import javafx.util.StringConverter;
 import main.core.command.*;
 import sx.blah.discord.util.EmbedBuilder;
+import sx.blah.discord.util.RequestBuffer;
 
 @RegisterCommand
 public class Debug extends Command implements IInvocable<Debug.Options> {
 	public Debug() {
-		super(new Builder("Debug"));
+		super(new Builder("Debug").withSchema("-a $ -b $ -c $ -d $"));
 	}
 
 	public void invoke(CommandArguments<Options> args) {
 		EmbedBuilder embed = new EmbedBuilder();
 		embed.appendField("Arguments", "[" + String.join(", ", args.parser.getResidue()) + "]", false);
 		embed.appendField("Options", "a=\"" + args.options.a + "\"\nb=\"" + args.options.b + "\"\nc=\"" + args.options.c + "\"\nd=\"" + args.options.d + "\"", false);
-		args.message.getChannel().sendMessage(embed.build());
+		RequestBuffer.request(() -> args.message.getChannel().sendMessage(embed.build()));
 	}
 
-	@CommandOptions("-a $ -b $ -c $ -d $")
+	@CommandOptions
 	public static class Options extends OptionsDefault {
 		@Option(
 				name = "first",

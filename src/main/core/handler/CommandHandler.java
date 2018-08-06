@@ -35,7 +35,7 @@ public class CommandHandler {
 							for (Class inner : clazz.getDeclaredClasses()) {
 								if (inner.isAnnotationPresent(CommandOptions.class)) {
 									command.setOptionsClass(inner);
-									command.setSchema(((CommandOptions) inner.getAnnotation(CommandOptions.class)).value());
+									//									command.setSchema(((CommandOptions) inner.getAnnotation(CommandOptions.class)).value());
 								}
 							}
 							OwO.logger.debug("Found command {} with annotation {}", inst, annotation);
@@ -86,11 +86,11 @@ public class CommandHandler {
 		try {
 			CommandArguments args = ArgumentBuilder.build(c, msg, body);
 			if (args.options.help) {
-				args.message.getChannel().sendMessage(new EmbedBuilder()
+				RequestBuffer.request(() -> args.message.getChannel().sendMessage(new EmbedBuilder()
 						.withTitle(c.getName())
 						.appendField("Options Info", args.parser.describeOptions(Maps.newHashMap(), OptionsParser.HelpVerbosity.LONG), false)
 						.appendField("Options Schema", c.getSchema().length() == 0 ? "No schema" : c.getSchema(), false)
-						.build());
+						.build()));
 			} else {
 				c.assertPermissions(args);
 				if (c instanceof IInvocable)
@@ -119,19 +119,6 @@ public class CommandHandler {
 		}
 	}
 
-	public static class InvalidPermissionsException extends Exception {
-		public InvalidPermissionsException(String message) {
-			super(message);
-		}
-
-		@Override
-		public String toString() {
-			String s       = "InvalidPermissionsException";
-			String message = getLocalizedMessage();
-			return (message != null) ? (s + ": " + message) : s;
-		}
-	}
-
 	public static class InvalidOptionException extends Exception {
 		public InvalidOptionException(String message) {
 			super(message);
@@ -140,6 +127,19 @@ public class CommandHandler {
 		@Override
 		public String toString() {
 			String s       = "InvalidOptionException";
+			String message = getLocalizedMessage();
+			return (message != null) ? (s + ": " + message) : s;
+		}
+	}
+
+	public static class InvalidPermissionsException extends Exception {
+		public InvalidPermissionsException(String message) {
+			super(message);
+		}
+
+		@Override
+		public String toString() {
+			String s       = "InvalidPermissionsException";
 			String message = getLocalizedMessage();
 			return (message != null) ? (s + ": " + message) : s;
 		}

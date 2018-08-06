@@ -13,6 +13,18 @@ repositories {
     jcenter()
 }
 
+//create a single Jar with all dependencies
+task fatJar(type: Jar) {
+    manifest {
+        attributes 'Implementation-Title': 'OwO Bot Jar File',
+                'Implementation-Version': version,
+                'Main-Class': 'core.OwO'
+    }
+    baseName = project.name + '-all'
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
+}
+
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
 
@@ -31,9 +43,9 @@ dependencies {
 
     compile "com.discord4j:Discord4J:${discord4j_version}"
 }
-
-idea {
-    module {
-        sourceDirs += file('src')
-    }
-}
+//
+//idea {
+//    module {
+//        sourceDirs += file('src')
+//    }
+//}

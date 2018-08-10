@@ -8,6 +8,7 @@ import sx.blah.discord.api.events.EventDispatcher;
 import sx.blah.discord.api.events.EventSubscriber;
 import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedEvent;
 
+import java.lang.reflect.ParameterizedType;
 import java.util.ArrayDeque;
 import java.util.HashMap;
 import java.util.Iterator;

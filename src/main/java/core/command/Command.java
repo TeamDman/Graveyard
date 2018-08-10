@@ -13,7 +13,7 @@ import java.util.function.BiPredicate;
 import java.util.stream.Collectors;
 
 public abstract class Command {
-	public  List<BiPredicate<CommandArguments, EnumSet<Permissions>>> requirements = Lists.newArrayList();
+	public  List<BiPredicate<CommandArguments, EnumSet<Permissions>>> requirements;
 	private List<String>                                              commands;
 	private String                                                    name;
 	private Class<? extends OptionsDefault>                           optionsClass = OptionsDefault.class;

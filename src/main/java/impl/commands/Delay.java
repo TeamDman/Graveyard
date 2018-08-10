@@ -20,7 +20,7 @@ public class Delay extends Command implements IInvocable<Delay.Options> {
 
 	@SuppressWarnings("unused")
 	public void invoke(CommandArguments<Options> args) {
-		EventHandler.addListener(MessageReceivedEvent.class, new EventHandler.Listener<MessageReceivedEvent>() {
+		EventHandler.addListener(MessageReceivedEvent.class, new EventHandler.IListener<MessageReceivedEvent>() {
 			@Override
 			public TransientEvent.ReturnType handle(TransientEvent<MessageReceivedEvent> event) {
 				if (event.event.getAuthor().equals(args.message.getAuthor())) {
@@ -41,7 +41,7 @@ public class Delay extends Command implements IInvocable<Delay.Options> {
 		RequestBuffer.request(() -> args.message.getChannel().sendMessage("Your next message's evaluation will be delayed by " + args.options.delay + "ms."));
 	}
 
-	@CommandOptions
+	@RegisterOptions
 	public static class Options extends Command.OptionsDefault {
 		@Option(
 				name = "time",

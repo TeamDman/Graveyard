@@ -18,7 +18,7 @@ public class Debug extends Command implements IInvocable<Debug.Options> {
 		RequestBuffer.request(() -> args.message.getChannel().sendMessage(embed.build()));
 	}
 
-	@CommandOptions
+	@RegisterOptions
 	public static class Options extends OptionsDefault {
 		@Option(
 				name = "first",

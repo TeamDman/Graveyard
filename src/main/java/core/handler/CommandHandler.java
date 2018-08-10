@@ -38,9 +38,9 @@ public class CommandHandler {
 							Command         command   = ((Command) inst);
 							RegisterCommand registrar = ((RegisterCommand) clazz.getAnnotation(annotation));
 							for (Class inner : clazz.getDeclaredClasses()) {
-								if (inner.isAnnotationPresent(CommandOptions.class)) {
+								if (inner.isAnnotationPresent(RegisterOptions.class)) {
 									command.setOptionsClass(inner);
-									//									command.setSchema(((CommandOptions) inner.getAnnotation(CommandOptions.class)).value());
+									//									command.setSchema(((RegisterOptions) inner.getAnnotation(RegisterOptions.class)).value());
 								}
 							}
 							OwO.logger.debug("Found command {} with annotation {}", inst, annotation);
@@ -73,7 +73,7 @@ public class CommandHandler {
 
 	private static void registerListener() {
 		final Pattern commandPattern = Pattern.compile("^OwO\\s+(\\S+)\\s*(.*)");
-		EventHandler.addListener(MessageReceivedEvent.class, new EventHandler.Listener<MessageReceivedEvent>() {
+		EventHandler.addListener(MessageReceivedEvent.class, new EventHandler.IListener<MessageReceivedEvent>() {
 			@Override
 			public TransientEvent.ReturnType handle(TransientEvent<MessageReceivedEvent> event) {
 				Matcher m = commandPattern.matcher(event.event.getMessage().getContent());

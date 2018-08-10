@@ -18,7 +18,7 @@ public class Shutdown extends Command implements IInvocable<Shutdown.Options> {
 		OwO.exit(args.options.restart ? OwO.ExitLevel.RESTART : OwO.ExitLevel.SUCCESS);
 	}
 
-	@CommandOptions
+	@RegisterOptions
 	public static class Options extends Command.OptionsDefault {
 		@Option(
 				name = "restart",

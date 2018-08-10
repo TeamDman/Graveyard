@@ -27,7 +27,7 @@ public class Repeat extends Command implements IInvocable<Repeat.Options> {
 	@Override
 	public void invoke(CommandArguments<Options> args) throws Throwable {
 		final BooleanContainer interrupt = new BooleanContainer();
-		EventHandler.addListener(MessageReceivedEvent.class, new EventHandler.Listener<MessageReceivedEvent>() {
+		EventHandler.addListener(MessageReceivedEvent.class, new EventHandler.IListener<MessageReceivedEvent>() {
 			@Override
 			public TransientEvent.ReturnType handle(TransientEvent<MessageReceivedEvent> event) {
 				if (event.event.getAuthor().equals(args.message.getAuthor())) {
@@ -68,7 +68,7 @@ public class Repeat extends Command implements IInvocable<Repeat.Options> {
 		});
 	}
 
-	@CommandOptions
+	@RegisterOptions
 	public static class Options extends OptionsDefault {
 		@Option(
 				name = "iterations",

@@ -34,7 +34,7 @@ public class IdleRPG extends Command implements IInvocable<IdleRPG.Options> {
 					.build()));
 	}
 
-	@CommandOptions
+	@RegisterOptions
 	public static class Options extends OptionsDefault {
 		@Option(
 				name = "nextlevel",

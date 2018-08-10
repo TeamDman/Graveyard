@@ -26,7 +26,7 @@ public class DatabaseHandler {
 			OwO.logger.info("Connected to SQLite database.");
 			return DriverManager.getConnection(url);
 		} catch (SQLException e) {
-			OwO.logger.warn("Error connecting to SQLite databse", e);
+			OwO.logger.warn("Error connecting to SQLite database", e);
 		}
 		return null;
 	}

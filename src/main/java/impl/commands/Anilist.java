@@ -79,7 +79,7 @@ public class Anilist extends Command implements IInvocable<Anilist.Options> {
 		}
 	}
 
-	@CommandOptions
+	@RegisterOptions
 	public static class Options extends OptionsDefault {
 		@Option(
 				name = "username",

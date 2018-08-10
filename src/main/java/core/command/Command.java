@@ -13,12 +13,12 @@ import java.util.function.BiPredicate;
 import java.util.stream.Collectors;
 
 public abstract class Command {
-	public  List<BiPredicate<CommandArguments, EnumSet<Permissions>>> requirements = Lists.newArrayList();
-	private List<String>                                              commands;
-	private String                                                    name;
-	private Class<? extends OptionsDefault>                           optionsClass = OptionsDefault.class;
-	private EnumSet<Permissions>                                      perms;
-	private String                                                    schema;
+	public final  List<BiPredicate<CommandArguments, EnumSet<Permissions>>> requirements;
+	private final List<String>                                              commands;
+	private final String                                                    name;
+	private       Class<? extends OptionsDefault>                           optionsClass = OptionsDefault.class;
+	private final EnumSet<Permissions>                                      perms;
+	private       String                                                    schema;
 
 	public Command(Builder builder) {
 		this.name = builder.name;
@@ -80,11 +80,11 @@ public abstract class Command {
 	}
 
 	public static class Builder {
-		public List<String>                                              commands     = Lists.newArrayList();
-		public String                                                    name;
-		public EnumSet<Permissions>                                      perms        = EnumSet.noneOf(Permissions.class);
-		public List<BiPredicate<CommandArguments, EnumSet<Permissions>>> requirements = Lists.newArrayList();
-		public String                                                    schema       = "";
+		public final List<String>                                              commands     = Lists.newArrayList();
+		public final String                                                    name;
+		public       EnumSet<Permissions>                                      perms        = EnumSet.noneOf(Permissions.class);
+		public final List<BiPredicate<CommandArguments, EnumSet<Permissions>>> requirements = Lists.newArrayList();
+		public       String                                                    schema       = "";
 
 		public Builder(String name) {
 			this.name = name;

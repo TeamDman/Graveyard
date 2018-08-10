@@ -33,14 +33,15 @@ public class CommandHandler {
 				public void reportTypeAnnotation(Class<? extends Annotation> annotation, String className) {
 					try {
 						Class<?> clazz = Class.forName(className);
-						Object   inst  = clazz.newInstance();
+						Object   inst  = clazz.getDeclaredConstructor().newInstance();
 						if (inst instanceof Command && annotation == RegisterCommand.class) {
 							Command         command   = ((Command) inst);
 							RegisterCommand registrar = ((RegisterCommand) clazz.getAnnotation(annotation));
 							for (Class inner : clazz.getDeclaredClasses()) {
-								if (inner.isAnnotationPresent(CommandOptions.class)) {
+								if (inner.isAnnotationPresent(RegisterOptions.class)) {
+									//noinspection unchecked
 									command.setOptionsClass(inner);
-									//									command.setSchema(((CommandOptions) inner.getAnnotation(CommandOptions.class)).value());
+									//									command.setSchema(((RegisterOptions) inner.getAnnotation(RegisterOptions.class)).value());
 								}
 							}
 							OwO.logger.debug("Found command {} with annotation {}", inst, annotation);
@@ -73,20 +74,18 @@ public class CommandHandler {
 
 	private static void registerListener() {
 		final Pattern commandPattern = Pattern.compile("^OwO\\s+(\\S+)\\s*(.*)");
-		EventHandler.addListener(MessageReceivedEvent.class, new EventHandler.Listener<MessageReceivedEvent>() {
-			@Override
-			public TransientEvent.ReturnType handle(TransientEvent<MessageReceivedEvent> event) {
-				Matcher m = commandPattern.matcher(event.event.getMessage().getContent());
-				if (m.find())
-					commands.stream()
-							.filter(v -> v.getCommands().contains(m.group(1)))
-							.findFirst()
-							.ifPresent(c -> CommandHandler.invokeCommand(c, event.event.getMessage(), m.group(2)));
-				return TransientEvent.ReturnType.DONOTHING;
-			}
+		EventHandler.addListener(MessageReceivedEvent.class, (EventHandler.IListener<MessageReceivedEvent>) event -> {
+			Matcher m = commandPattern.matcher(event.event.getMessage().getContent());
+			if (m.find())
+				commands.stream()
+						.filter(v -> v.getCommands().contains(m.group(1)))
+						.findFirst()
+						.ifPresent(c -> CommandHandler.invokeCommand(c, event.event.getMessage(), m.group(2)));
+			return TransientEvent.ReturnType.DONOTHING;
 		});
 	}
 
+	@SuppressWarnings("unchecked")
 	private static void invokeCommand(Command c, IMessage msg, String body) {
 		try {
 			CommandArguments args = ArgumentBuilder.build(c, msg, body);

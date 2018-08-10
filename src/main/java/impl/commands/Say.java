@@ -5,7 +5,6 @@ import core.command.*;
 import core.handler.CommandHandler;
 import core.handler.ConversionHandler;
 import sx.blah.discord.handle.obj.IChannel;
-import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.Permissions;
 import sx.blah.discord.util.RequestBuffer;
 
@@ -33,7 +32,7 @@ public class Say extends Command implements IInvocable<Say.Options> {
 			RequestBuffer.request(args.message::delete);
 	}
 
-	@CommandOptions
+	@RegisterOptions
 	public static class Options extends OptionsDefault {
 		@Option(
 				name = "channel",

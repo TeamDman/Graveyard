@@ -20,28 +20,25 @@ public class Delay extends Command implements IInvocable<Delay.Options> {
 
 	@SuppressWarnings("unused")
 	public void invoke(CommandArguments<Options> args) {
-		EventHandler.addListener(MessageReceivedEvent.class, new EventHandler.Listener<MessageReceivedEvent>() {
-			@Override
-			public TransientEvent.ReturnType handle(TransientEvent<MessageReceivedEvent> event) {
-				if (event.event.getAuthor().equals(args.message.getAuthor())) {
-					new Timer().schedule(new TimerTask() {
-						@Override
-						public void run() {
-							RequestBuffer.request(() -> event.event.getMessage().removeReaction(OwO.client.getOurUser(), ReactionEmoji.of("⏱")));
-							EventHandler.onMessage.handle(event.event);
-						}
-					}, args.options.delay);
-					RequestBuffer.request(() -> event.event.getMessage().addReaction(ReactionEmoji.of("⏱")));
-					event.setCanceled(true);
-					return TransientEvent.ReturnType.UNSUBSCRIBE;
-				}
-				return TransientEvent.ReturnType.DONOTHING;
+		EventHandler.addListener(MessageReceivedEvent.class, (EventHandler.IListener<MessageReceivedEvent>) event -> {
+			if (event.event.getAuthor().equals(args.message.getAuthor())) {
+				new Timer().schedule(new TimerTask() {
+					@Override
+					public void run() {
+						RequestBuffer.request(() -> event.event.getMessage().removeReaction(OwO.client.getOurUser(), ReactionEmoji.of("⏱")));
+						EventHandler.onMessage.handle(event.event);
+					}
+				}, args.options.delay);
+				RequestBuffer.request(() -> event.event.getMessage().addReaction(ReactionEmoji.of("⏱")));
+				event.setCanceled(true);
+				return TransientEvent.ReturnType.UNSUBSCRIBE;
 			}
+			return TransientEvent.ReturnType.DONOTHING;
 		});
 		RequestBuffer.request(() -> args.message.getChannel().sendMessage("Your next message's evaluation will be delayed by " + args.options.delay + "ms."));
 	}
 
-	@CommandOptions
+	@RegisterOptions
 	public static class Options extends Command.OptionsDefault {
 		@Option(
 				name = "time",

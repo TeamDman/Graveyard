@@ -42,26 +42,25 @@ public class PaginatorListener {
 						return true;
 					})
 					.execute();
-			reactionListener = new ReactionListener(source, this::handle, this::handle, null);
+			reactionListener = new ReactionListener(new ReactionListener.Builder(source).setOnAdd(this::handle).setOnRemove(this::handle));
 		});
 	}
 
 	private TransientEvent.ReturnType handle(ReactionEvent event) {
-		if (!(event.getMessageID() != message.getLongID() || !event.getUser().equals(author)))
-			switch (PageControl.fromEmoji(event.getReaction().getEmoji())) {
-				case LEFT:
-					index = --index < 0 ? pages.size() - 1 : index;
-					displayPage();
-					break;
-				case RIGHT:
-					index = ++index >= pages.size() ? 0 : index;
-					displayPage();
-					break;
-				case STOP:
-					RequestBuffer.request(message::removeAllReactions);
-					reactionListener.dispose();
-					break;
-			}
+		switch (PageControl.fromEmoji(event.getReaction().getEmoji())) {
+			case LEFT:
+				index = --index < 0 ? pages.size() - 1 : index;
+				displayPage();
+				break;
+			case RIGHT:
+				index = ++index >= pages.size() ? 0 : index;
+				displayPage();
+				break;
+			case STOP:
+				RequestBuffer.request(message::removeAllReactions);
+				reactionListener.dispose();
+				break;
+		}
 		return TransientEvent.ReturnType.DONOTHING;
 	}
 

@@ -14,12 +14,9 @@ public class IdleRPGHandler {
 	}
 
 	private static void registerHandler() {
-		EventHandler.addListener(MessageReceivedEvent.class, new EventHandler.Listener<MessageReceivedEvent>() {
-			@Override
-			public TransientEvent.ReturnType handle(TransientEvent<MessageReceivedEvent> event) {
-				onMessage(event.event);
-				return TransientEvent.ReturnType.DONOTHING;
-			}
+		EventHandler.addListener(MessageReceivedEvent.class, (EventHandler.IListener<MessageReceivedEvent>) event -> {
+			onMessage(event.event);
+			return TransientEvent.ReturnType.DONOTHING;
 		});
 	}
 
@@ -29,7 +26,7 @@ public class IdleRPGHandler {
 			if (user != null) {
 				if (deltaLevelup(user.levelup) <= 0) {
 					user.levelup();
-					RequestBuffer.request(()->event.getChannel().sendMessage(event.getAuthor().getName() + " has reached level " + user.level + " in idlerpg!\nNext level in " + deltaLevelup(user.levelup) + " seconds."));
+					RequestBuffer.request(()->event.getChannel().sendMessage(event.getAuthor().getName() + " has reached level " + user.level + " in IdleRPG!\nNext level in " + deltaLevelup(user.levelup) + " seconds."));
 					DatabaseHandler.insert(user);
 				} else {
 					RequestBuffer.request(() -> event.getChannel().sendMessage("You have " + deltaLevelup(user.levelup) + " seconds until your next levelup."));
@@ -49,8 +46,9 @@ public class IdleRPGHandler {
 	}
 
 	public static class User {
-		public int  level;
-		public long userId, levelup;
+		public       int  level;
+		public final long userId;
+		public long levelup;
 
 		public User(long userId, int level, long levelup) {
 			this.userId = userId;

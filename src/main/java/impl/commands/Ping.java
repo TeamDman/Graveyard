@@ -28,7 +28,7 @@ public class Ping extends Command implements IInvocable<Ping.Options> {
 		}, arg.options.delay);
 	}
 
-	@CommandOptions
+	@RegisterOptions
 	public static class Options extends OptionsDefault {
 		@Option(
 				name = "delay",
@@ -47,7 +47,7 @@ public class Ping extends Command implements IInvocable<Ping.Options> {
 		@Option(
 				name = "time",
 				abbrev = 't',
-				help = "Displays the response time in ms.",
+				help = "Displays the Response time in ms.",
 				defaultValue = "false"
 		)
 		public boolean time;

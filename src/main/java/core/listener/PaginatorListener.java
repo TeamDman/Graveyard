@@ -1,5 +1,6 @@
 package core.listener;
 
+import com.google.common.collect.Streams;
 import core.OwO;
 import core.handler.TransientEvent;
 import sx.blah.discord.api.internal.json.objects.EmbedObject;
@@ -8,25 +9,24 @@ import sx.blah.discord.handle.impl.obj.ReactionEmoji;
 import sx.blah.discord.handle.obj.IChannel;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IUser;
+import sx.blah.discord.util.EmbedBuilder;
 import sx.blah.discord.util.RequestBuffer;
 import sx.blah.discord.util.RequestBuilder;
 
+import javax.annotation.Nullable;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class PaginatorListener {
-	private final IUser             author;
-	private final IChannel          channel;
 	private final List<EmbedObject> pages;
 	private       int               index = 0;
 	private       IMessage          message;
 	private       ReactionListener  reactionListener;
 
-	public PaginatorListener(IMessage source, List<EmbedObject> pages) {
-		this.author = source.getAuthor();
-		this.channel = source.getChannel();
-		this.pages = pages;
+	public PaginatorListener(IChannel channel, @Nullable IUser user, List<EmbedBuilder> pages) {
+		this.pages = Streams.mapWithIndex(pages.stream(), (v,i) -> v.withFooterText("Page "+ (i+1) + " of " + pages.size()).build()).collect(Collectors.toList());
 		RequestBuffer.request(() -> {
-			this.message = channel.sendMessage(pages.get(0));
+			this.message = channel.sendMessage(this.pages.get(0));
 			new RequestBuilder(OwO.client)
 					.shouldBufferRequests(true)
 					.doAction(() -> {
@@ -42,7 +42,7 @@ public class PaginatorListener {
 						return true;
 					})
 					.execute();
-			reactionListener = new ReactionListener(new ReactionListener.Builder(source).setOnAdd(this::handle).setOnRemove(this::handle));
+			reactionListener = new ReactionListener(new ReactionListener.Builder(message).setAuthor(user).setOnAdd(this::handle).setOnRemove(this::handle));
 		});
 	}
 

@@ -14,7 +14,7 @@ public class IdleRPGHandler {
 	}
 
 	private static void registerHandler() {
-		EventHandler.addListener(MessageReceivedEvent.class, (EventHandler.IListener<MessageReceivedEvent>) event -> {
+		EventHandler.addListener(EventHandler.Priority.BOTTOM, MessageReceivedEvent.class, (EventHandler.IListener<MessageReceivedEvent>) event -> {
 			onMessage(event.event);
 			return TransientEvent.ReturnType.DONOTHING;
 		});

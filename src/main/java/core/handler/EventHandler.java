@@ -8,7 +8,6 @@ import sx.blah.discord.api.events.EventDispatcher;
 import sx.blah.discord.api.events.EventSubscriber;
 import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedEvent;
 
-import java.lang.reflect.ParameterizedType;
 import java.util.ArrayDeque;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -21,9 +20,17 @@ public class EventHandler {
 		dispatcher.registerListener(onMessage.class);
 	}
 
-	public static void addListener(Class<? extends Event> event, IListener listener) {
+	public static void addListener(Priority priority, Class<? extends Event> event, IListener listener) {
 		listeners.computeIfAbsent(event, k -> Queues.newArrayDeque());
-		listeners.get(event).addFirst(listener);
+		if (priority == Priority.TOP)
+			listeners.get(event).addFirst(listener);
+		else
+			listeners.get(event).addLast(listener);
+	}
+
+	public enum Priority {
+		TOP,
+		BOTTOM
 	}
 
 	public interface IListener<T extends Event> {

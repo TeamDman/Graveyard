@@ -60,8 +60,9 @@ public class ReactionListener {
 			return author;
 		}
 
-		public void setAuthor(IUser author) {
+		public Builder setAuthor(IUser author) {
 			this.author = author;
+			return this;
 		}
 
 		private ReactionEmoji getEmoji() {

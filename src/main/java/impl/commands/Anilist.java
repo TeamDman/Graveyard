@@ -22,9 +22,7 @@ import java.util.List;
 @RegisterCommand
 public class Anilist extends Command implements IInvocable<Anilist.Options> {
 	public Anilist() {
-		super(new Builder("Anilist")
-				.withCommand("anilist")
-		.withSchema("-u $"));
+		super(new Builder("Anilist").withSchema("-u $"));
 	}
 
 	@Override

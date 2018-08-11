@@ -37,9 +37,9 @@ public class ArgumentBuilder {
 				matchList.add(regexMatcher.group());
 			}
 		}
-		if (!schema.isEmpty() && matchList.stream().noneMatch(s -> s.startsWith("-"))) {
-			if (matchList.size() < StringUtils.countMatches(schema, "$"))
-				throw new CommandHandler.InvalidOptionException("Not enough arguments to satisfy the schema.");
+		if (!schema.isEmpty() && matchList.size() > 0 && matchList.stream().noneMatch(s -> s.startsWith("-"))) {
+			if (matchList.size() != StringUtils.countMatches(schema, "$"))
+				throw new CommandHandler.InvalidOptionException("No schema found matching the number of arguments given.");
 			ArrayList<String> schemaList = Lists.newArrayList(schema.split("\\s+"));
 			Iterator<String>  iter       = matchList.iterator();
 			schemaList.replaceAll(s -> {

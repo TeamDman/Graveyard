@@ -20,7 +20,7 @@ public class Delay extends Command implements IInvocable<Delay.Options> {
 
 	@SuppressWarnings("unused")
 	public void invoke(CommandArguments<Options> args) {
-		EventHandler.addListener(MessageReceivedEvent.class, (EventHandler.IListener<MessageReceivedEvent>) event -> {
+		EventHandler.addListener(EventHandler.Priority.TOP, MessageReceivedEvent.class, (EventHandler.IListener<MessageReceivedEvent>) event -> {
 			if (event.event.getAuthor().equals(args.message.getAuthor())) {
 				new Timer().schedule(new TimerTask() {
 					@Override

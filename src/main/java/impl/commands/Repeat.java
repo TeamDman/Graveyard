@@ -21,7 +21,7 @@ public class Repeat extends Command implements IInvocable<Repeat.Options> {
 	@Override
 	public void invoke(CommandArguments<Options> args) throws Throwable {
 		final BooleanContainer interrupt = new BooleanContainer();
-		EventHandler.addListener(MessageReceivedEvent.class, (EventHandler.IListener<MessageReceivedEvent>) event -> {
+		EventHandler.addListener(EventHandler.Priority.TOP, MessageReceivedEvent.class, (EventHandler.IListener<MessageReceivedEvent>) event -> {
 			if (event.event.getAuthor().equals(args.message.getAuthor())) {
 				new Thread(() -> {
 					try {

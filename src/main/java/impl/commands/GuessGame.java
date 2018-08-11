@@ -33,7 +33,7 @@ public class GuessGame extends Command implements IInvocable<GuessGame.Options> 
 		final Pattern                 responsePattern = Pattern.compile(args.options.pattern);
 		final HashMap<IUser, Integer> responses       = Maps.newHashMap();
 		final AtomicBoolean           listening       = new AtomicBoolean(true);
-		EventHandler.IListener<MessageReceivedEvent> listener = event -> {
+		EventHandler.addListener(EventHandler.Priority.BOTTOM, MessageReceivedEvent.class, (EventHandler.IListener<MessageReceivedEvent>) event -> {
 			if (!listening.get())
 				return TransientEvent.ReturnType.UNSUBSCRIBE;
 
@@ -48,8 +48,7 @@ public class GuessGame extends Command implements IInvocable<GuessGame.Options> 
 				}
 			}
 			return TransientEvent.ReturnType.DONOTHING;
-		};
-		EventHandler.addListener(MessageReceivedEvent.class, listener);
+		});
 		Executors.newSingleThreadScheduledExecutor().schedule(() -> {
 			OwO.logger.info("Done");
 			listening.set(false);

@@ -121,7 +121,7 @@ public abstract class Command {
 		@Option(
 				name = "help",
 				abbrev = '?',
-				help = "Displays command information.",
+				help = "Displays command usage details.",
 				defaultValue = "false"
 		)
 		public boolean help;

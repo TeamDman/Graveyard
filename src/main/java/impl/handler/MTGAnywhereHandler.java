@@ -48,7 +48,7 @@ public class MTGAnywhereHandler {
 			OwO.logger.error("Error loading mtg info", e);
 		}
 
-		EventHandler.addListener(MessageReceivedEvent.class, (EventHandler.IListener<MessageReceivedEvent>) (event) -> {
+		EventHandler.addListener(EventHandler.Priority.BOTTOM, MessageReceivedEvent.class, (EventHandler.IListener<MessageReceivedEvent>) (event) -> {
 			cards.stream().filter(x -> x.pattern.matcher(event.event.getMessage().getContent().toLowerCase()).find()).findAny().ifPresent(card -> {
 				if (card.name.toLowerCase().equals("x") && !event.event.getMessage().getContent().toLowerCase().equals("x"))
 					return;

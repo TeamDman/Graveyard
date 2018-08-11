@@ -74,13 +74,15 @@ public class CommandHandler {
 
 	private static void registerListener() {
 		final Pattern commandPattern = Pattern.compile("^OwO\\s+(\\S+)\\s*(.*)");
-		EventHandler.addListener(MessageReceivedEvent.class, (EventHandler.IListener<MessageReceivedEvent>) event -> {
+		EventHandler.addListener(EventHandler.Priority.BOTTOM, MessageReceivedEvent.class, (EventHandler.IListener<MessageReceivedEvent>) event -> {
 			Matcher m = commandPattern.matcher(event.event.getMessage().getContent());
-			if (m.find())
+			if (m.find()) {
 				commands.stream()
 						.filter(v -> v.getCommands().contains(m.group(1)))
 						.findFirst()
 						.ifPresent(c -> CommandHandler.invokeCommand(c, event.event.getMessage(), m.group(2)));
+				event.setCanceled(true);
+			}
 			return TransientEvent.ReturnType.DONOTHING;
 		});
 	}

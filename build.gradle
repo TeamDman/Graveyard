@@ -40,6 +40,8 @@ dependencies {
     compile group: 'com.google.guava', name: 'guava', version: '23.5-jre'
     compile 'com.github.pcj:google-options:1.0.0'
 
+    compile group: 'ch.qos.cal10n', name: 'cal10n-api', version: '0.8.1'
+
 
     compile "com.discord4j:Discord4J:${discord4j_version}"
 }

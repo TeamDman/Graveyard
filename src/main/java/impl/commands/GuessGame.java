@@ -50,7 +50,6 @@ public class GuessGame extends Command implements IInvocable<GuessGame.Options> 
 			return TransientEvent.ReturnType.DONOTHING;
 		});
 		Executors.newSingleThreadScheduledExecutor().schedule(() -> {
-			OwO.logger.info("Done");
 			listening.set(false);
 			int          target = new Random().nextInt(args.options.upper + 1 - args.options.lower) + args.options.lower;
 			EmbedBuilder embed  = new EmbedBuilder().withTitle("Results:");

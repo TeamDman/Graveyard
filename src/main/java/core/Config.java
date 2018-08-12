@@ -1,5 +1,7 @@
 package core;
 
+import core.i18n.Console;
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -23,7 +25,7 @@ public class Config {
 				props.put(p.name(), p.fallback);
 			save();
 		} catch (IOException eIO) {
-			OwO.logger.error("Unhandled error creating config object '" + name + "'", eIO);
+			OwO.logger.error(Console.ERROR_EXCEPTION_CONFIG_LOAD, name, eIO);
 		}
 	}
 
@@ -31,7 +33,7 @@ public class Config {
 		try (FileOutputStream out = new FileOutputStream(name + ".properties")) {
 			props.store(out, name);
 		} catch (IOException e) {
-			OwO.logger.error("Error while saving properties for '" + name + "'", e);
+			OwO.logger.error(Console.ERROR_EXCEPTION_CONFIG_SAVE, name, e);
 		}
 	}
 

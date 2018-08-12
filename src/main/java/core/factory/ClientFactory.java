@@ -1,13 +1,13 @@
-package core.handler;
+package core.factory;
 
 import core.OwO;
 import core.Config;
+import core.i18n.Console;
 import sx.blah.discord.api.ClientBuilder;
 import sx.blah.discord.api.IDiscordClient;
 import sx.blah.discord.util.DiscordException;
 
-public class ClientHandler {
-
+public class ClientFactory {
 	private static IDiscordClient createClient(String token, boolean login) {
 		ClientBuilder clientBuilder = new ClientBuilder();
 		clientBuilder.withToken(token);
@@ -18,7 +18,7 @@ public class ClientHandler {
 				return clientBuilder.build();
 			}
 		} catch (DiscordException e) {
-			OwO.logger.error("Discord token not present. Check OwO-Bot.properties for valid token",e);
+			OwO.logger.error(Console.ERROR_EXCEPTION_CONFIG_MISSINGTOKEN,e);
 			OwO.exit(OwO.ExitLevel.ERROR);
 			return null;
 		}

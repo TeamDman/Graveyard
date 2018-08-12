@@ -1,11 +1,14 @@
-package impl.handler;
+package impl.module;
 
 import com.google.common.collect.Sets;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import core.handler.IModule;
 import core.OwO;
+import core.handler.RegisterModule;
 import core.handler.EventHandler;
 import core.handler.TransientEvent;
+import core.i18n.Console;
 import core.listener.ReactionListener;
 import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedEvent;
 import sx.blah.discord.handle.impl.obj.ReactionEmoji;
@@ -20,14 +23,46 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Pattern;
 
-public class MTGAnywhereHandler {
+@RegisterModule
+public class MTGAnywhere implements IModule {
 	public static final  Set<Card>     cards          = Sets.newHashSet();
 	private static final ReactionEmoji emoji          = ReactionEmoji.of("mtg", 477378432242679808L);
+	private EventHandler.IListener listener;
 	private static final int           maxLevenshtein = 1;
 
-	public static void init() {
+	private static int levenshtein(String x, String y) {
+		int[][] dp = new int[x.length() + 1][y.length() + 1];
+
+		for (int i = 0; i <= x.length(); i++) {
+			for (int j = 0; j <= y.length(); j++) {
+				if (i == 0) {
+					dp[i][j] = j;
+				} else if (j == 0) {
+					dp[i][j] = i;
+				} else {
+					dp[i][j] = min(dp[i - 1][j - 1]
+									+ costOfSubstitution(x.charAt(i - 1), y.charAt(j - 1)),
+							dp[i - 1][j] + 1,
+							dp[i][j - 1] + 1);
+				}
+			}
+		}
+
+		return dp[x.length()][y.length()];
+	}
+
+	private static int min(int... numbers) {
+		return Arrays.stream(numbers)
+				.min().orElse(Integer.MAX_VALUE);
+	}
+
+	private static int costOfSubstitution(char a, char b) {
+		return a == b ? 0 : 1;
+	}
+
+	public void init() {
 		try {
-			OwO.logger.info("Parsing MTG cards");
+			OwO.logger.info(Console.DEBUG_MTG_LOAD_START);
 			String text = new Scanner(new File("src/main/resources/mtgcards.json")).useDelimiter("\\A").next();
 			((Map<String, Expansion>) new Gson().fromJson(text, new TypeToken<Map<String, Expansion>>() {
 			}.getType())).values().forEach(e -> Collections.addAll(cards, e.cards));
@@ -35,8 +70,7 @@ public class MTGAnywhereHandler {
 			for (Card c : cards)
 				if (c.multiverseid == 0)
 					System.out.println(c.multiverseid);
-			OwO.logger.info("Parse complete");
-
+			OwO.logger.info(Console.DEBUG_MTG_LOAD_FINISH);
 			cards.forEach(v -> v.pattern = Pattern.compile(("(?:" + v.name
 					.toLowerCase()
 					.replaceAll("[^a-zA-Z ]", "")
@@ -45,10 +79,13 @@ public class MTGAnywhereHandler {
 					+ ")")
 					.replace("(?:)", "(?!)")));
 		} catch (IOException e) {
-			OwO.logger.error("Error loading mtg info", e);
+			OwO.logger.error(Console.ERROR_EXCEPTION_MTG_LOAD, e);
 		}
+	}
 
-		EventHandler.addListener(EventHandler.Priority.BOTTOM, MessageReceivedEvent.class, (EventHandler.IListener<MessageReceivedEvent>) (event) -> {
+	@Override
+	public void enable() {
+		listener = EventHandler.addListener(EventHandler.Priority.BOTTOM, MessageReceivedEvent.class, (EventHandler.IListener<MessageReceivedEvent>) (event) -> {
 			cards.stream().filter(x -> x.pattern.matcher(event.event.getMessage().getContent().toLowerCase()).find()).findAny().ifPresent(card -> {
 				if (card.name.toLowerCase().equals("x") && !event.event.getMessage().getContent().toLowerCase().equals("x"))
 					return;
@@ -83,34 +120,9 @@ public class MTGAnywhereHandler {
 		});
 	}
 
-	static int levenshtein(String x, String y) {
-		int[][] dp = new int[x.length() + 1][y.length() + 1];
-
-		for (int i = 0; i <= x.length(); i++) {
-			for (int j = 0; j <= y.length(); j++) {
-				if (i == 0) {
-					dp[i][j] = j;
-				} else if (j == 0) {
-					dp[i][j] = i;
-				} else {
-					dp[i][j] = min(dp[i - 1][j - 1]
-									+ costOfSubstitution(x.charAt(i - 1), y.charAt(j - 1)),
-							dp[i - 1][j] + 1,
-							dp[i][j - 1] + 1);
-				}
-			}
-		}
-
-		return dp[x.length()][y.length()];
-	}
-
-	private static int min(int... numbers) {
-		return Arrays.stream(numbers)
-				.min().orElse(Integer.MAX_VALUE);
-	}
-
-	private static int costOfSubstitution(char a, char b) {
-		return a == b ? 0 : 1;
+	@Override
+	public void disable() {
+		EventHandler.removeListener(listener);
 	}
 
 	private static class Card {

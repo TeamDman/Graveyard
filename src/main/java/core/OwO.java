@@ -1,24 +1,29 @@
 package core;
 
-import core.handler.ClientHandler;
+import ch.qos.cal10n.IMessageConveyor;
+import ch.qos.cal10n.MessageConveyor;
+import core.factory.ClientFactory;
 import core.handler.CommandHandler;
-import core.handler.DatabaseHandler;
 import core.handler.EventHandler;
-import impl.handler.IdleRPGHandler;
-import impl.handler.MTGAnywhereHandler;
-import org.slf4j.Logger;
+import core.handler.ModuleHandler;
+import core.i18n.Console;
+import core.i18n.LocLogger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.api.IDiscordClient;
 
+import java.util.Locale;
+
 public class OwO {
-	public static final IDiscordClient client;
-	public static final Config         config;
-	public static final Logger         logger;
+	public static final IDiscordClient   client;
+	public static final Config           config;
+	public static final IMessageConveyor i18n;
+	public static final LocLogger        logger;
 
 	static {
-		logger = LoggerFactory.getLogger("OwO");
+		i18n = new MessageConveyor(Locale.CANADA);
+		logger = new LocLogger(LoggerFactory.getLogger("OwO"), i18n);
 		config = Config.getConfig();
-		client = ClientHandler.getClient();
+		client = ClientFactory.getClient();
 	}
 
 	public static void exit(ExitLevel state) {
@@ -28,9 +33,9 @@ public class OwO {
 	public static void main(String[] args) {
 		EventHandler.init();
 		CommandHandler.init();
-		DatabaseHandler.init();
-		IdleRPGHandler.init();
-		MTGAnywhereHandler.init();
+		ModuleHandler.init();
+
+		logger.info(Console.INFO_LOADED);
 	}
 
 	public enum ExitLevel {

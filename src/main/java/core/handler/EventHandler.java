@@ -20,12 +20,17 @@ public class EventHandler {
 		dispatcher.registerListener(onMessage.class);
 	}
 
-	public static void addListener(Priority priority, Class<? extends Event> event, IListener listener) {
+	public static <T extends Event> IListener<T> addListener(Priority priority, Class<? extends Event> event, IListener<T> listener) {
 		listeners.computeIfAbsent(event, k -> Queues.newArrayDeque());
 		if (priority == Priority.TOP)
 			listeners.get(event).addFirst(listener);
 		else
 			listeners.get(event).addLast(listener);
+		return listener;
+	}
+
+	public static void removeListener(IListener listener) {
+		listeners.forEach((i,v) -> v.remove(listener));
 	}
 
 	public enum Priority {

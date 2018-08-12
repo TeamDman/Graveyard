@@ -82,9 +82,9 @@ public abstract class Command {
 	public static class Builder {
 		public final List<String>                                              commands     = Lists.newArrayList();
 		public final String                                                    name;
-		public       EnumSet<Permissions>                                      perms        = EnumSet.noneOf(Permissions.class);
-		public final List<BiPredicate<CommandArguments, EnumSet<Permissions>>> requirements = Lists.newArrayList();
-		public       String                                                    schema       = "";
+		EnumSet<Permissions>                                      perms        = EnumSet.noneOf(Permissions.class);
+		final List<BiPredicate<CommandArguments, EnumSet<Permissions>>> requirements = Lists.newArrayList();
+		String                                                    schema       = "";
 
 		public Builder(String name) {
 			this.name = name;

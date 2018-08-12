@@ -6,6 +6,7 @@ import com.google.devtools.common.options.OptionsParser;
 import com.google.devtools.common.options.OptionsParsingException;
 import core.OwO;
 import core.command.*;
+import core.i18n.Console;
 import eu.infomas.annotation.AnnotationDetector;
 import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedEvent;
 import sx.blah.discord.handle.obj.IMessage;
@@ -44,11 +45,11 @@ public class CommandHandler {
 									//									command.setSchema(((RegisterOptions) inner.getAnnotation(RegisterOptions.class)).value());
 								}
 							}
-							OwO.logger.debug("Found command {} with annotation {}", inst, annotation);
+							OwO.logger.debug(Console.DEBUG_COMMAND_DISCOVERED, command.getName());
 							registerCommand(command, clazz);
 						}
 					} catch (Throwable e) {
-						OwO.logger.warn("Exception registering command from " + className, e);
+						OwO.logger.warn(Console.ERROR_EXCEPTION_COMMAND_REGISTER, className, e);
 					}
 				}
 
@@ -60,14 +61,14 @@ public class CommandHandler {
 
 			}).detect();
 		} catch (IOException e) {
-			OwO.logger.error("Error detecting command register annotation, aborting", e);
+			OwO.logger.error(Console.ERROR_EXCEPTION_COMMAND_ANNOTATION, e);
 			OwO.exit(OwO.ExitLevel.ERROR);
 		}
 	}
 
 	private static void registerCommand(Command c, Class clazz) {
 		if (!(c instanceof IInvocable))
-			OwO.logger.warn("Command {} does not have an invocation implementation. Skipping", c.getName());
+			OwO.logger.warn(Console.ERROR_COMMAND_NOINVOCATION, c.getName());
 		else
 			commands.add(c);
 	}
@@ -105,7 +106,7 @@ public class CommandHandler {
 					throw new NoSuchMethodException("Command is missing an invocation method!");
 			}
 		} catch (OptionsParsingException e) {
-			OwO.logger.warn("Error getting options for command '" + c.getName() + "'", e);
+			OwO.logger.warn(Console.ERROR_EXCEPTION_COMMAND_OPTIONSFAILED, c.getName(), e);
 			RequestBuffer.request(() -> msg.getChannel().sendMessage(new EmbedBuilder()
 					.appendField("Command Option Error", e.getLocalizedMessage(), true)
 					.build()));
@@ -117,7 +118,7 @@ public class CommandHandler {
 		} catch (InvalidPermissionsException e) {
 			RequestBuffer.request(() -> msg.getChannel().sendMessage(e.toString()));
 		} catch (Throwable e) {
-			OwO.logger.warn("Error executing command '" + c.getName() + "'", e);
+			OwO.logger.warn(Console.ERROR_EXCEPTION_COMMAND_EXECUTION, e);
 			RequestBuffer.request(() -> msg.getChannel().sendMessage(new EmbedBuilder()
 					.withTitle("Error executing command")
 					.appendDesc(e.toString())

@@ -5,6 +5,7 @@ import core.OwO;
 import core.command.*;
 import core.handler.EventHandler;
 import core.handler.TransientEvent;
+import core.i18n.Console;
 import core.listener.ReactionListener;
 import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedEvent;
 import sx.blah.discord.handle.impl.obj.ReactionEmoji;
@@ -33,7 +34,7 @@ public class Repeat extends Command implements IInvocable<Repeat.Options> {
 						}
 						RequestBuffer.request(args.message::removeAllReactions);
 					} catch (InterruptedException e) {
-						OwO.logger.warn("An exception occurred while repeating", e);
+						OwO.logger.warn(Console.ERROR_EXCEPTION_COMMAND_REPEAT, e);
 						RequestBuffer.request(() -> args.message.getChannel().sendMessage("An exception occurred while repeating."));
 					}
 				}).start();

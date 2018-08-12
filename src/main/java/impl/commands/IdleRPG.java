@@ -2,8 +2,6 @@ package impl.commands;
 
 import com.google.devtools.common.options.Option;
 import core.command.*;
-import core.handler.DatabaseHandler;
-import impl.handler.IdleRPGHandler;
 import sx.blah.discord.handle.obj.Permissions;
 import sx.blah.discord.util.EmbedBuilder;
 import sx.blah.discord.util.RequestBuffer;
@@ -19,10 +17,10 @@ public class IdleRPG extends Command implements IInvocable<IdleRPG.Options> {
 
 	@Override
 	public void invoke(CommandArguments<Options> args) throws Throwable {
-		IdleRPGHandler.User user = DatabaseHandler.getUser(args.message.getAuthor());
+		impl.module.IdleRPG.User user = impl.module.IdleRPG.getUser(args.message.getAuthor());
 		if (args.options.nextlevel != -1) {
 			user.levelup = (new Date().getTime()/1000)+args.options.nextlevel;
-			DatabaseHandler.insert(user);
+			impl.module.IdleRPG.setUser(user);
 			RequestBuffer.request(() -> args.message.getChannel().sendMessage("Your next levelup has been set for " + args.options.nextlevel + " seconds in the future."));
 		} else
 			RequestBuffer.request(() -> args.message.getChannel().sendMessage(new EmbedBuilder()
@@ -30,7 +28,7 @@ public class IdleRPG extends Command implements IInvocable<IdleRPG.Options> {
 					.withAuthorIcon(args.message.getAuthor().getAvatarURL())
 					.withAuthorName(args.message.getAuthor().getName())
 					.appendDesc("Level: " + user.level)
-					.appendDesc("\nNext Levelup: " + IdleRPGHandler.deltaLevelup(user.levelup) + " seconds")
+					.appendDesc("\nNext Levelup: " + impl.module.IdleRPG.deltaLevelup(user.levelup) + " seconds")
 					.build()));
 	}
 

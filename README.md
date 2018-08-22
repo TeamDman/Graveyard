@@ -1,2 +1,2 @@
-# Shinobu-Bot
-An attempt at recreating the Shinobu discord bot in python
+# OwO-Bot
+A fun project built using discord.py

@@ -1,29 +1,59 @@
 parameters:
-- &none "${NONE}"
-- &string "${STRING}"
-- &number "${NUMBER}"
-- &user "${USER}"
-- &member "${MEMBER}"
-- &role "${ROLE}"
-- &channel "${CHANNEL}"
+  string: &string "${STRING}"
+  number: &number "${NUMBER}"
+  user: &user "${USER}"
+  member: &member "${MEMBER}"
+  role: &role "${ROLE}"
+  channel: &channel "${CHANNEL}"
+  remaining: &remaining "${REMAINING}"
+  empty: &empty {}
 
-defaults:
+routes:
+  none: &none "${NONE}"
+  routeless: &routeless "${ROUTELESS}"
+
+command: &command
+  desc: ""
   params:
-    *none : []
+    *none : *empty
+  aliases: []
 
 commands:
   help:
+    <<: *command
     desc: "Lists commands"
   info:
+    <<: *command
     desc: "Displays information about the bot"
   markov:
+    <<: *command
     desc: "Markov chain utilities"
     params:
-      gen: []
-      say: [*member, *channel]
-      scry: [*channel, *number]
+      gen: *empty
+      say:
+        author: *member
+        source: *channel
+      scry:
+        source: *channel
+        amount: *number
+      save: *empty
+      load: *empty
   settings:
+    <<: *command
     desc: "Configuration for the bot"
     aliases:
-    - config
-    - cfg
+      - config
+      - cfg
+  voice:
+    <<: *command
+    desc: "Lets the bot join voice channels"
+    params:
+      join:
+        voicechannel: *channel
+      leave: *empty
+  eval:
+    <<: *command
+    desc: "Evaluates a python statement"
+    params:
+      *routeless :
+        *remaining : *string

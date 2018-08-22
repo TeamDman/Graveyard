@@ -21,8 +21,8 @@ def register_command(f):
     commandDict[module.commands.name] = Command(
         module.commands.name,
         f,
-        (module_config["aliases"] if "aliases" in module_config else []) + [module.commands.name],
-        module_config["params"] if "params" in module_config else config.commands["defaults"]["params"],
+        module_config["aliases"] + [module.commands.name],
+        module_config["params"],
         module_config["desc"]
     )
     print(_("console.command.register").format(module.commands.name))

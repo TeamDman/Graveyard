@@ -22,6 +22,7 @@ async def on_message(clazz, client, message):
 
     for name, command in commands.commandDict.items():
         if any(alias.match(args[0]) for alias in command.aliases):
+            print(_("console.command.execute").format(name))
             try:
                 del args[0]
                 args = cmdutil.build_args(client, command, message, args)
@@ -34,5 +35,4 @@ async def on_message(clazz, client, message):
                 em = discord.Embed(colour=0xFFA500)
                 em.description = _("response.error.execution").format(e.args[0])
                 await client.send_message(message.channel, embed=em)
-            print(_("console.command.execute").format(name))
             break

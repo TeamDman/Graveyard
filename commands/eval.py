@@ -1,8 +1,9 @@
 import commands
 
 
-class Help:
+class Eval:
     @staticmethod
     @commands.register_command
     async def __call__(client, message, args):
-        await client.send_message(message.channel,"heelp")
+        result = eval(str.join(" ", args))
+        await client.send_message(message.channel, result)

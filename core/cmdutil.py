@@ -11,34 +11,42 @@ class ExecutionException(Exception):
     pass
 
 
-def map_arg(param, client, guild, identifier):
+def map_arg(params, param_name, args, index, client, guild):
     switch = {
-        "${NONE}": lambda c, g, x: "",
-        "${STRING}": lambda c, g, x: x,
-        "${NUMBER}": get_number,
-        "${USER}": get_user,
-        "${MEMBER}": get_member,
-        "${ROLE}": get_role,
-        "${CHANNEL}": get_channel
+        config.commands["parameters"]["string"]: lambda c, g, x: x,
+        config.commands["parameters"]["number"]: get_number,
+        config.commands["parameters"]["user"]: get_user,
+        config.commands["parameters"]["member"]: get_member,
+        config.commands["parameters"]["role"]: get_role,
+        config.commands["parameters"]["channel"]: get_channel
     }
-    return switch.get(param, lambda c, g, x: x)(client, guild, identifier)
+    if param_name == config.commands["parameters"]["remaining"]:
+        convert = switch.get(params[param_name])
+        return [convert(client, guild, arg) for arg in args[index:]]
+    return switch.get(params[param_name])(client, guild, args[index])
 
 
 def build_args(client, command, message, args):
     if len(args) == 0:
-        args = ["${NONE}"]
-    if args[0] not in command.params:
+        args = [config.commands["routes"]["none"]]
+    if config.commands["routes"]["routeless"] in command.params:
+        route = config.commands["routes"]["routeless"]
+        new_args = []
+    else:
+        route = args[0]
+        args = args[1:]
+        new_args = [route]
+    if route not in command.params:
         raise ArgumentException(_("exception.arguments.route_missing"))
-    route = args[0]
-    args = args[1:]
     params = command.params[route]
-    if len(args) != len(params):
+    if len(args) != len(params) and config.commands["parameters"]["remaining"] not in params:
         raise ArgumentException(_("exception.arguments.mismatch").format(len(args), len(params)))
-    new_args = [map_arg(param, client, message.server, args[i]) for i, param in enumerate(params)]
+    for i, param_name in enumerate(params.keys()):
+        new_args += map_arg(params, param_name, args, i, client, message.server)
     if None in new_args:
         i = new_args.index(None)
         raise ArgumentException(_("exception.arguments.parse_failed").format(args[i], params[i]))
-    return [route] + new_args
+    return new_args
 
 
 def trim_mention(mention):

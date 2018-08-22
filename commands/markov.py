@@ -2,10 +2,19 @@ import discord
 import commands
 import markovify
 from core import cmdutil
+import os
 
 
 class Markov:
     text_models = {}
+
+    @staticmethod
+    def write_models():
+        for channel, models in Markov.text_models.items():
+            os.makedirs("../resources/markov_models/{}".format(channel))
+            for user, model in models.items():
+                with open("../resources/markov_models/{}/{}.json".format(channel, user), "w") as f:
+                    f.write(model.to_json())
 
     @staticmethod
     @commands.register_command
@@ -45,4 +54,16 @@ class Markov:
                 if len(corpus) > 0:
                     Markov.text_models[args[1].id][author] = markovify.NewlineText(corpus)
             await client.send_message(message.channel, _("response.info.markov.load_end"))
-#             todo: editing updating parsing status
+        #             todo: editing updating parsing status
+        if args[0] == "save":
+            Markov.write_models()
+            await client.send_message(message.channel, _("response.info.markov.file.write"))
+        if args[0] == "load":
+            await client.send_message(message.channel, _("response.info.markov.file.read"))
+            for root, channels, files in os.walk("../resources/markov_models"):
+                for f in os.scandir("../resources/markov_models"):
+                    if f.is_dir():
+                        for json in os.scandir(f):
+                            if json.is_file():
+                                print(json)
+

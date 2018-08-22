@@ -1,0 +1,6 @@
+token.yaml
+resources/corpus.txt
+/venv/
+/.idea/
+/__pycache__/
+/core/__pycache__/

@@ -1,0 +1,29 @@
+parameters:
+- &none "${NONE}"
+- &string "${STRING}"
+- &number "${NUMBER}"
+- &user "${USER}"
+- &member "${MEMBER}"
+- &role "${ROLE}"
+- &channel "${CHANNEL}"
+
+defaults:
+  params:
+    *none : []
+
+commands:
+  help:
+    desc: "Lists commands"
+  info:
+    desc: "Displays information about the bot"
+  markov:
+    desc: "Markov chain utilities"
+    params:
+      gen: []
+      say: [*member, *channel]
+      scry: [*channel, *number]
+  settings:
+    desc: "Configuration for the bot"
+    aliases:
+    - config
+    - cfg

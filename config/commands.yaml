@@ -57,3 +57,9 @@ commands:
     params:
       *routeless :
         *remaining : *string
+  roleinfo:
+    <<: *command
+    desc: "Displays information about a given role"
+    params:
+      *routeless :
+        role: *role

@@ -23,7 +23,7 @@ def map_arg(params, param_name, args, index, client, guild):
     if param_name == config.commands["parameters"]["remaining"]:
         convert = switch.get(params[param_name])
         return [convert(client, guild, arg) for arg in args[index:]]
-    return switch.get(params[param_name])(client, guild, args[index])
+    return [switch.get(params[param_name])(client, guild, args[index])]
 
 
 def build_args(client, command, message, args):
@@ -42,10 +42,11 @@ def build_args(client, command, message, args):
     if len(args) != len(params) and config.commands["parameters"]["remaining"] not in params:
         raise ArgumentException(_("exception.arguments.mismatch").format(len(args), len(params)))
     for i, param_name in enumerate(params.keys()):
-        new_args += map_arg(params, param_name, args, i, client, message.server)
-    if None in new_args:
-        i = new_args.index(None)
-        raise ArgumentException(_("exception.arguments.parse_failed").format(args[i], params[i]))
+        mapped = map_arg(params, param_name, args, i, client, message.server)
+        if None in mapped:
+            raise ArgumentException(
+                _("exception.arguments.parse_failed").format(args[i], param_name, params[param_name]))
+        new_args += mapped
     return new_args
 
 
@@ -91,4 +92,8 @@ def get_user(client, guild, identifier):
 
 def get_role(client, guild, identifier):
     """Gets a role from the given guild"""
+    identifier = trim_mention(identifier).lower()
+    return next((role for role in guild.roles if
+                 role.id == identifier or role.name.lower() == identifier),
+                None)
     pass

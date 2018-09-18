@@ -1,7 +1,11 @@
 from core import cmdutil
 from core import config
+import math
+import re
+import shlex
 import discord
 import commands
+
 
 
 async def on_ready(clazz, client):
@@ -18,7 +22,7 @@ async def on_message(clazz, client, message):
     if not config.prefix.match(message.content):
         return
 
-    args = message.content[len(config.core["prefix"]):].split()
+    args = shlex.split(message.content[len(config.core["prefix"]):])
 
     for name, command in commands.commandDict.items():
         if any(alias.match(args[0]) for alias in command.aliases):
@@ -36,3 +40,13 @@ async def on_message(clazz, client, message):
                 em.description = _("response.error.execution").format(e.args[0])
                 await client.send_message(message.channel, embed=em)
             break
+
+
+async def on_react(clazz, client, reaction, user):
+    if str(reaction.emoji) == "❓":
+        results = re.findall(r"(\d+)\s*f", reaction.message.content)
+        if len(results) == 0:
+            return
+        f = int(results[0])
+        await client.send_message(reaction.message.channel,
+                                  "{}°F is {}°C".format(f, math.floor(((f - 32) * 5 / 9) * 10) / 10))

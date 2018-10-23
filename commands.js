@@ -7,19 +7,19 @@ const userdata = require("./userdata.json");
 const commands = {};
 let api;
 
-commands.init = function(api_) {
+commands.init = (api_) => {
 	api = api_;
-	api.listen(onMessage);
+	api.listen(commands.onMessage);
 	return commands;
 }
 
-commands.writeData = function() {
+commands.writeData = () => {
 	jsonfile.writeFile('userdata.json', userdata, {spaces: 4}, (err) => {
 		if (err) console.error(err);
 	});
 };
 
-commands.onMessage = function(err, message) {
+commands.onMessage = (err, message) => {
 	if (err) return console.error(err);
 	console.log(`message ${message.body} received`);
 	if (message.threadID != "1634015523317762") return;
@@ -44,7 +44,7 @@ function download(uri, filename, callback) {
   });
 }
 
-module.export = commands;
+module.exports = commands;
 commands.list = [];
 function addCommand(name, action) {
 	commands.list.push({name: name.name, pattern: name.pattern || name.name, action: action});

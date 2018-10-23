@@ -1,0 +1,25 @@
+{
+  "name": "owo-bot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "dependencies": {
+    "facebook-chat-api": "^1.6.0",
+    "jimp": "^0.5.4",
+    "jsonfile": "^5.0.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TeamDman/OwO-Bot.git"
+  },
+  "author": "TeamDman",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/TeamDman/OwO-Bot/issues"
+  },
+  "homepage": "https://github.com/TeamDman/OwO-Bot#readme"
+}

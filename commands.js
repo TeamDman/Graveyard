@@ -179,7 +179,7 @@ addCommand({name: 'order66'}, (message, args) => {
 });
 
 addCommand({name: 'roulette'}, (message, args) => {
-  if (roulette == 0) {
+  if (roulette == 0 || args[0] && args[0] == 'spin') {
     roulette = Math.floor(Math.random() * 7 + 1);
     api.sendMessage('Reloaded the revolver.', message.threadID);
   }
@@ -214,6 +214,11 @@ addCommand({name: 'sudo', perms: isAdmin}, (message, args) => {
   message.body = args[1];
   message.senderID = args[0];
   commands.onMessage(null, message);
+});
+
+addCommand({name: 'die', perms: isAdmin}, (message, args) => {
+  api.sendMessage('Goodbye.', message.threadID);
+  setTimeout(() => process.exit(), 1000);
 });
 
 addCommand({name: 'debug'}, (message, args) => {

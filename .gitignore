@@ -1,0 +1,10 @@
+/node_modules/
+/venv/
+/resources/
+/core/
+/config/
+/commands/
+/__pycache__/
+/.idea/
+/.git/
+token.json

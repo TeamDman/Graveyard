@@ -6,7 +6,8 @@
   "dependencies": {
     "facebook-chat-api": "^1.6.0",
     "jimp": "^0.5.4",
-    "jsonfile": "^5.0.0"
+    "jsonfile": "^5.0.0",
+    "node-markovify": "^1.0.3"
   },
   "devDependencies": {},
   "scripts": {

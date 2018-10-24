@@ -195,7 +195,7 @@ addCommand({name: 'roulette'}, (message, args) => {
 addCommand({name: 'reload', perms: isAdmin}, (message, args) => {
   try {
     delete require.cache[path.resolve('./commands.js')];
-    require('./commands').init(api);
+    require('./commands.js').init(api);
     commands.onMessage = (a, b) => {};
     api.sendMessage('Reloaded successfully.', message.threadID);
   } catch (e) {
@@ -207,7 +207,7 @@ addCommand({name: 'undo'}, (message, args) => {
   commands.undoQueue.pop()();
 });
 
-addCommand({name: 'sudo'}, (message, args) => {
+addCommand({name: 'sudo', perms: isAdmin}, (message, args) => {
   message.body = args[1];
   message.senderID = args[0];
   commands.onMessage(null, message);

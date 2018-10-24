@@ -186,6 +186,9 @@ addCommand({name: 'roulette'}, (message, args) => {
   if (roulette == 1) {
     commands.kick(message.senderID, message.threadID);
     api.sendMessage('Bang!', message.threadID);
+    setTimeout(() => {
+      api.addUsertoGroup(message.senderID, message.threadID);
+    }, 600000);
   } else {
     api.sendMessage('Click!', message.threadID);
   }

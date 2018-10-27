@@ -11,6 +11,10 @@ const raddest = '1634015523317762';
 const admins = {
   '100010346405871': 'Dom'
 };
+const responses = {
+  'good bot': ':)',
+  '🎈': '🎈'
+};
 const isAdmin = (id) => !!admins[id];
 const commands = {};
 commands.list = [];
@@ -43,17 +47,25 @@ commands.kick = (id, group) => {
   }
 };
 
+commands.delayPardon = (id, group) => {
+  setTimeout(() => {
+    api.addUserToGroup(id, group);
+  }, 60000);
+};
+
 commands.checkDuels = (message) => {
   for (duel of Object.values(commands.duels)) {
     if (duel.isActive && duel.participants.includes(message.senderID)) {
-      if (message.timestamp != 0) {
+      if (duel.timestamp != 0) {
         api.sendMessage('Bang!', message.threadID);
         for (id of duel.participants.filter(n => n != message.senderID)) {
           commands.kick(id, message.threadID);
+          commands.delayPardon(id, message.threadID);
         }
       } else {
         api.sendMessage('False start!', message.threadID);
         commands.kick(message.senderID, message.threadID);
+        commands.delayPardon(message.senderID, message.threadID);
       }
       delete commands.duels[duel.host];
     }
@@ -66,8 +78,8 @@ commands.onMessage = (err, message) => {
   if (message.threadID != raddest) return;
   if (!message.type == 'message') return;
   commands.checkDuels(message);
-  if (message.body.indexOf('🎈') != -1) {
-    api.sendMessage('🎈', message.threadID);
+  if (message.body.toLowerCase() in responses) {
+    api.sendMessage(responses[message.body.toLowerCase()], message.threadID);
   }
   if (message.body.indexOf('OwO') !== 0) return;
   let repl = [];
@@ -180,15 +192,13 @@ addCommand({name: 'order66'}, (message, args) => {
 
 addCommand({name: 'roulette'}, (message, args) => {
   if (roulette == 0 || args[0] && args[0] == 'spin') {
-    roulette = Math.floor(Math.random() * 7 + 1);
+    roulette = Math.floor(Math.random() * 6 + 1);
     api.sendMessage('Reloaded the revolver.', message.threadID);
   }
   if (roulette == 1) {
     commands.kick(message.senderID, message.threadID);
     api.sendMessage('Bang!', message.threadID);
-    setTimeout(() => {
-      api.addUsertoGroup(message.senderID, message.threadID);
-    }, 600000);
+    commands.delayPardon(message.senderID, message.threadID);
   } else {
     api.sendMessage('Click!', message.threadID);
   }
@@ -207,7 +217,9 @@ addCommand({name: 'reload', perms: isAdmin}, (message, args) => {
 });
 
 addCommand({name: 'undo'}, (message, args) => {
-  commands.undoQueue.pop()();
+  for (let i = 0; i < args[1] && parseInt(args[1]) || 1; i++) {
+    commands.undoQueue.pop()();
+  }
 });
 
 addCommand({name: 'sudo', perms: isAdmin}, (message, args) => {
@@ -227,6 +239,15 @@ addCommand({name: 'debug'}, (message, args) => {
 
 addCommand({name: 'kick', perms: isAdmin}, (message, args) => {
   commands.kick(args[0], message.threadID);
+  if (args[1]) {
+    setTimeout(() => {
+      api.addUserToGroup(args[0], message.threadID);
+    }, parseInt(args[1]));
+  }
+});
+
+addCommand({name: 'echo', perms: isAdmin}, (message, args) => {
+  api.sendMessage(args.join(' '), message.threadID);
 });
 
 addCommand({name: 'add'}, (message, args) => {
@@ -301,30 +322,38 @@ addCommand({name: 'duel'}, (message, args) => {
       if (duel.isActive) {
         api.sendMessage('That duel has already started.', message.threadID);
       } else if (duel.canAccept(message.senderID)) {
+        duel.timestamp = 0;
+        duel.isActive = true;
         duel.participants.push(message.senderID);
         api.sendMessage({
           body: message.mentions[args[1]] + 's challenge has been accepted!\nThe winner of the duel will be the first one to send a message after the countdown hits 0.\nFalse starts result in death.',
           mentions: [{tag: message.mentions[args[1]], id: args[1]}]
-        });
-        duel.timestamp = 0;
-        duel.isActive = true;
+        }, message.threadID);
         setTimeout(() => {
-          api.sendMessage('3', message.threadID);
-          setTimeout(() => {
-            api.sendMessage('2', message.threadID);
+          if (args[1] in commands.duels) {
+            api.sendMessage('3', message.threadID);
             setTimeout(() => {
-              api.sendMessage('1', message.threadID);
-              setTimeout(() => {
-                api.sendMessage('DRAW!', message.threadID, (err, msg) => {
-                  duel.timestamp = msg.timestamp;
-                });
-              }, 1000);
-            }, 1000);
-          }, 1000);
-        }, 1000);
+              if (args[1] in commands.duels) {
+                api.sendMessage('2', message.threadID);
+                setTimeout(() => {
+                  if (args[1] in commands.duels) {
+                    api.sendMessage('1', message.threadID);
+                    setTimeout(() => {
+                      if (args[1] in commands.duels) {
+                        api.sendMessage('DRAW!', message.threadID, (err, msg) => {
+                          duel.timestamp = msg.timestamp;
+                        });
+                      }
+                    }, 1500);
+                  }
+                }, 1500);
+              }
+            }, 1500);
+          }
+        }, 3000);
 
         setTimeout(function () {
-          if (args[1] in commands.duels && commands.duels[args[1]].timestamp == duel.timestamp) {
+          if (args[1] in commands.duels && commands.duels[args[1]].timestamp == duel.timestamp && !commands.duels[args[1]].isActive) {
             delete commands.duels[message.senderID];
             api.sendMessage('The duel has timed out.', message.threadID);
           }

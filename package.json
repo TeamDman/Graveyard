@@ -4,7 +4,7 @@
   "description": "",
   "main": "app.js",
   "dependencies": {
-    "facebook-chat-api": "^1.6.0",
+    "facebook-chat-api": "^1.6.1",
     "jimp": "^0.5.4",
     "jsonfile": "^5.0.0",
     "node-markovify": "^1.0.3"

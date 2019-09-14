@@ -4,6 +4,7 @@
   "description": "",
   "main": "app.js",
   "dependencies": {
+    "express": "^4.17.1",
     "facebook-chat-api": "^1.6.1",
     "jimp": "^0.5.4",
     "jsonfile": "^5.0.0",

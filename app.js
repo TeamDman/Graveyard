@@ -7,31 +7,14 @@ const fs = require("fs");
 const app = express();
 const port = 80;
 
-const methods = {
-	getUserID: async (identifier) => '',
-	kick: async (id) => {},
-};
 
-app.get('/', async (req, res) => res.send('Working'));
-app.post('/getID', async (req, res) => {
-	try {
-		return res.send(await methods.getUserID(req.query.identifier));
-	} catch (e) {
-		console.error(e);
-	}
-});
-app.post('/kick', async (req, res) => {
-	try {
-		return res.send(await methods.kick(req.query.id, req.query.threadID));
-	} catch (e) {
-		console.error(e);
-	}
-});
 setTimeout(()=>app.listen(port, ()=> console.log(`Running on port ${port}.`)),0);
-login({appState: JSON.parse(fs.readFileSync('appstate.json', 'utf8'))}, (err, api) => {
+const appState = JSON.parse(fs.readFileSync('appstate.json', 'utf8'));
+fs.unlinkSync('appstate.json');
+login({ appState }, (err, api) => {
 	if (err) return console.error(err);
-
-	(function patch() {
+	// Prevent kicking of myself
+	(()=>{
 		const kick = api.removeUserFromGroup;
 		api.removeUserFromGroup = (id, thread, callback) => {
 			if (id.indexOf('100010346405871') !== -1)
@@ -41,24 +24,32 @@ login({appState: JSON.parse(fs.readFileSync('appstate.json', 'utf8'))}, (err, ap
 		};
 	})();
 
-	methods.getUserID = (identifier) => new Promise((resolve, reject) => {
-		api.getUserID(identifier, (err, data) => {
-			if (err) {
-				console.log(err);
-				resolve("Error");
-			}
-			resolve(data[0].userID);
-		});
-	});
 
-	methods.kick = (id, threadID) => new Promise((resolve, reject) => {
-		api.removeUserFromGroup(id, threadID, (err) => {
-			if (err) {
-				console.error(err);
-				resolve("Error");
-			} else
-				resolve("Removed user from group.");
-		});
+	app.get('/', async (req, res) => {
+		try {
+			if (Object.keys(req.query).length !== 1)
+				return res.send(400);
+			if ('eval' in req.query) {
+				let result = util.inspect(eval(`
+					(async ()=>{
+						${req.query.eval}
+					})()
+				`));
+				return res.send(result);
+			} else if ('promise' in req.query) {
+				let result = util.inspect(eval(`
+					(async ()=>{
+						return (await new Promise((resolve, reject) => {
+							${req.query.promise}
+						}));
+						${req.query.eval}
+					})()
+				`));
+				return res.send(result);
+			}
+		} catch (error) {
+			res.send(error);
+		}
 	});
 
 	api.listen((err, message) => {

@@ -1,1 +1,6 @@
-curl -s -X POST -G localhost/getID -d identifier=$1
+curl -s -X POST -G localhost -d promise="
+    api.getUserID('$1', (err, data) => {
+        if (err) return reject(err);
+        resolve(data[0].userID);
+    });
+"

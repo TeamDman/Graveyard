@@ -1,2 +1,6 @@
-curl -s -X POST -G localhost/kick -d threadID=$threadID -d id=$(getID $1)
-
+curl -s -X POST -G localhost -d promise="
+    api.removeUserFromGroup('$(getID $1)', '$threadID', err => {
+        if (err) return reject(err);
+        resolve("Removed user from the group.");
+    });
+"

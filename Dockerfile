@@ -3,11 +3,14 @@ ENV PATH="/app/bin:${PATH}"
 
 RUN mkdir /app
 WORKDIR /app/
+
 COPY package.json /app/
 COPY package-lock.json /app/
-
 RUN npm i
-COPY . /app/
+
+COPY app.js /app/
+COPY appstate.json /app/
+
 RUN chmod +x /app/bin/*
 CMD ["node","/app/app.js"]
 #CMD ["bash"]

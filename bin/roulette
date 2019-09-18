@@ -1,0 +1,7 @@
+FLIP=$(($(($RANDOM%10))%2))
+if [ $FLIP -eq 1 ]; then
+    echo "BANG!";
+    kickID $senderID;
+else
+    echo "Click!";
+fi

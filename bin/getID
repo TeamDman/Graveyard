@@ -1,6 +1,7 @@
-curl -s -X POST -G localhost -d promise="
+curl -s -X POST localhost --data-binary @- <<EOF
+promise=
     api.getUserID('$1', (err, data) => {
         if (err) return reject(err);
         resolve(data[0].userID);
     });
-"
+EOF

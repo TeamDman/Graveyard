@@ -1,0 +1,7 @@
+curl -s -X POST localhost --data-binary @- << EOF
+promise=
+    api.changeAdminStatus($threadID, [$(getID $1)], ${2:-true}, err => {
+        if (err) return reject(err);
+        resolve("Set admin status to ${2:-true}.");
+    });
+EOF

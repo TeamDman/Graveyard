@@ -1,7 +1,1 @@
-curl -s -X POST localhost --data-binary @- << EOF
-promise=
-    api.removeUserFromGroup($(getID $1), $threadID, err => {
-        if (err) return reject(err);
-        resolve("Removed user from the group.");
-    });
-EOF
+kickID $(getID $1)

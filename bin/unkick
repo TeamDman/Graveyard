@@ -1,0 +1,4 @@
+id=$(tail --lines 1 kick.log)
+head -n -1 kick.log > temp;
+mv temp kick.log;
+addUser $id

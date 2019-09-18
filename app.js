@@ -98,6 +98,9 @@ login({appState}, (err, api) => {
                     api.sendMessage(error, message.threadID);
                 }
             }
+            if (message.body.toLowerCase().indexOf('good bot') !== -1) {
+            	api.sendMessage("(◕‿◕✿)", message.threadID);
+			}
         } catch (e) {
         	console.error(`Error parsing raw command: ${e}`);
         }

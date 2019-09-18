@@ -1,0 +1,4 @@
+id=$(getID $1)
+kickID $id
+sleep ${2:-10}
+addUser $id

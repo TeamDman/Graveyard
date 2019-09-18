@@ -1,6 +1,6 @@
 curl -s -X POST localhost --data-binary @- << EOF
 promise=
-    api.changeAdminStatus($threadID, [$(getID $1)], ${2:-true}, err => {
+    api.changeNickname("$2", $threadID, $(getID $1), err => {
         if (err) return reject(err.toString());
     });
 EOF

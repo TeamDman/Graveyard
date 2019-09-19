@@ -11,7 +11,7 @@ const port = 80;
 
 setTimeout(() => app.listen(port, () => console.log(`Running on port ${port}.`)), 0);
 
-login({appState: process.env.APPSTATE}, (err, api) => {
+login({appState: JSON.parse(process.env.APPSTATE)}, (err, api) => {
     if (err) return console.error(err);
     fs.unlinkSync('appstate.json');
     appState = undefined;

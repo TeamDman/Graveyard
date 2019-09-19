@@ -1,6 +1,7 @@
-curl -s -X POST localhost --data-binary @- << EOF
+curl -s -X POST localhost --data-binary @- >/dev/null << EOF
 promise=
     api.changeNickname("$2", $threadID, $(getID $1), err => {
         if (err) return reject(err.toString());
+        resolve(0);
     });
 EOF

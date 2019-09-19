@@ -1,6 +1,7 @@
-curl -s -X POST localhost --data-binary @- << EOF
+curl -s -X POST localhost --data-binary @- >> /dev/null << EOF
 promise=
     api.addUserToGroup($1, $threadID, err => {
         if (err) return reject(err.toString());
+        resolve(0);
     });
 EOF

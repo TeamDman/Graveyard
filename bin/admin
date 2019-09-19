@@ -2,5 +2,6 @@ curl -s -X POST localhost --data-binary @- << EOF
 promise=
     api.changeAdminStatus($threadID, [$(getID $1)], ${2:-true}, err => {
         if (err) return reject(err.toString());
+        resolve(0);
     });
 EOF

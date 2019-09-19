@@ -1,0 +1,3 @@
+senderID=$(getID $1)
+shift
+eval "$@"

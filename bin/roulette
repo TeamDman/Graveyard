@@ -3,7 +3,7 @@ if [ $FLIP -eq 1 ]; then
     echo "BANG!";
     kickID $senderID;
     sleep 10
-    addUser $senderID
+    addID $senderID
 else
     echo "Click!";
 fi

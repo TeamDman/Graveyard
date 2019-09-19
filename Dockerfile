@@ -1,4 +1,5 @@
 FROM node:latest
+ENV APPSTATE
 ENV PATH="/app/bin:${PATH}"
 
 RUN mkdir /app
@@ -9,7 +10,6 @@ COPY package-lock.json /app/
 RUN npm i
 
 COPY app.js /app/
-COPY appstate.json /app/
 COPY bin/ /app/bin/
 
 RUN chmod +x /app/bin/*

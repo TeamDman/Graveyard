@@ -10,8 +10,8 @@ app.use(bodyParser.urlencoded({extended: true}));
 const port = 80;
 
 setTimeout(() => app.listen(port, () => console.log(`Running on port ${port}.`)), 0);
-let appState = JSON.parse(fs.readFileSync('appstate.json', 'utf8'));
-login({appState}, (err, api) => {
+
+login({appState: process.env.APPSTATE}, (err, api) => {
     if (err) return console.error(err);
     fs.unlinkSync('appstate.json');
     appState = undefined;

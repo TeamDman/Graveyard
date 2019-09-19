@@ -1,5 +1,4 @@
 FROM node:latest
-ENV APPSTATE
 ENV PATH="/app/bin:${PATH}"
 
 RUN mkdir /app

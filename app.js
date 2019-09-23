@@ -7,9 +7,9 @@ const app = express();
 const bodyParser = require('body-parser');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
-const port = 80;
 
-setTimeout(() => app.listen(port, () => console.log(`Running on port ${port}.`)), 0);
+
+setTimeout(() => {const listener = app.listen(process.env.PORT, () => console.log(`Running on port ${listener.address().port}.`))}, 0);
 
 login({appState: JSON.parse(process.env.APPSTATE)}, (err, api) => {
     if (err) return console.error(err);
@@ -82,7 +82,8 @@ login({appState: JSON.parse(process.env.APPSTATE)}, (err, api) => {
                     env: {
                         'threadID': `'${message.threadID}'`,
                         'senderID': `'${message.senderID}'`,
-                        'PATH': process.env.PATH
+                        'PATH': process.env.PATH,
+                        'PORT': process.env.PORT,
                     }, shell: 'bash'
                 }, (err, stdout, stderr) => {
                     if (err) api.sendMessage(err, message.threadID);

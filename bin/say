@@ -1,4 +1,4 @@
-curl -s -X POST localhost --data-binary @- >/dev/null << EOF
+curl -s -X POST "localhost:$PORT" --data-binary @- >/dev/null << EOF
 promise=
     api.sendMessage($1, $threadID, err => {
         if (err) return reject(err.toString());

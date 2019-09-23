@@ -1,4 +1,4 @@
-curl -s -X POST localhost --data-binary @- <<EOF
+curl -s -X POST "localhost:$PORT" --data-binary @- <<EOF
 promise=
     api.getUserID('$1', (err, data) => {
         if (err) return reject(err);

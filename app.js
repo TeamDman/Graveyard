@@ -13,8 +13,7 @@ setTimeout(() => {const listener = app.listen(process.env.PORT, () => console.lo
 
 login({appState: JSON.parse(process.env.APPSTATE)}, (err, api) => {
     if (err) return console.error(err);
-    fs.unlinkSync('appstate.json');
-    appState = undefined;
+    process.env.APPSTATE=undefined;
     // Prevent kicking of myself
     (() => {
 

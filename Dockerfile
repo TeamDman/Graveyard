@@ -6,15 +6,18 @@ ENV PORT=${PORT:-1997}
 RUN mkdir /app
 WORKDIR /app/
 
+RUN apk add --no-cache curl bash openssh python
+ADD heroku-exec.sh /app/.profile.d/heroku-exec.sh
+
 COPY package.json /app/
 COPY package-lock.json /app/
 RUN npm i
 
 COPY app.js /app/
-COPY heroku-exec.sh /app/heroku-exec.sh
 COPY bin/ /app/bin/
 
 RUN chmod +x /app/bin/*
+RUN rm /bin/sh && ln -s /bin/bash /bin/sh
 CMD bash heroku-exec.sh && node /app/app.js
 #CMD ["node","/app/app.js"]
 #CMD ["bash"]

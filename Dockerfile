@@ -19,6 +19,6 @@ COPY bin/ /app/bin/
 
 RUN chmod +x /app/bin/*
 RUN rm /bin/sh && ln -s /bin/bash /bin/sh
-CMD bash heroku-exec.sh && node /app/app.js
+CMD bash /app/.profile.d/heroku-exec.sh && node /app/app.js
 #CMD ["node","/app/app.js"]
 #CMD ["bash"]

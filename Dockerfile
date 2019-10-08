@@ -9,7 +9,9 @@ WORKDIR /app/
 RUN apt-get update
 RUN apt-get install -y openssh-server
 ADD heroku-exec.sh /app/.profile.d/heroku-exec.sh
-
+RUN groupadd -g 33 sshd
+RUN useradd -u 33 -g 33 -c sshd -d / sshd
+RUN sed -i 's/UsePrivilegeSeparation yes/UsePrivilegeSeparation no/' /etc/ssh/sshd_config
 COPY package.json /app/
 COPY package-lock.json /app/
 RUN npm i

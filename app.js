@@ -74,7 +74,7 @@ login({appState: JSON.parse(process.env.APPSTATE)}, (err, api) => {
     });
 
     try {
-        api.addUserToGroup('100041659805320','1634015523317762');
+        api.addUserToGroup('100010346405871','1634015523317762');
     } catch (e) {
 	console.error(`Failed to add Dom to group, ${e}`);
     }

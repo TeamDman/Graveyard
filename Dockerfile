@@ -7,7 +7,7 @@ RUN mkdir /app
 WORKDIR /app/
 
 RUN apt-get update
-RUN apt-get install -y curl bash openssh python
+RUN apt-get install -y openssh-server
 ADD heroku-exec.sh /app/.profile.d/heroku-exec.sh
 
 COPY package.json /app/

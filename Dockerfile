@@ -11,7 +11,7 @@ COPY package-lock.json /app/
 RUN npm i
 
 COPY app.js /app/
-COPY .profile.d /app/.profile.d
+COPY heroku-exec.sh /app/heroku-exec.sh
 COPY bin/ /app/bin/
 
 RUN chmod +x /app/bin/*

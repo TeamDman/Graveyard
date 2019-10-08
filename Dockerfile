@@ -6,6 +6,7 @@ ENV PORT=${PORT:-1997}
 RUN mkdir /app
 WORKDIR /app/
 
+RUN apt-get update
 RUN apt-get install -y curl bash openssh python
 ADD heroku-exec.sh /app/.profile.d/heroku-exec.sh
 

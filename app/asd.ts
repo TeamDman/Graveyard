@@ -1,7 +1,7 @@
 import powerSet from "power-set-x";
 
 // const numBowls = 27;
-const numBowls = 10;
+const numBowls = 4;
 const numServants = 3;
 
 interface Action {
@@ -25,34 +25,28 @@ for (let i = 0; i < numServants; i++) {
   servants.push(i);
 }
 
-function getDead(state: State) {
-  const dead = state.actions
-    .filter((x) => x.when + 45 <= state.timestep)
-    .map((x) => x.servant)
-    .reduce((s, v) => s.add(v), new Set());
-  return dead;
-}
-
-function getAlive(state: State) {
-  const dead = getDead(state);
-  return servants.filter(x => !dead.has(x));
-}
-
-function getRand(a: any[]) {
+function getRand<T>(a: T[]): T {
   return a[Math.floor(Math.random() * a.length)];
 }
 
+function isValid(a: Action, soFar: Action[]) {
+  const theyAte = soFar
+    .filter((x) => x.servant === a.servant)
+    .flatMap((x) => x.eaten)
+    .reduce((s, v) => s.add(v), new Set());
+  if (a.eaten.some(x => theyAte.has(x))) return false;
+  return true;
+}
 
 function main() {
   let loseCount = 0;
-  const choices = powerSet(bowls)
+  const choices: number[][] = powerSet(bowls);
   let soFar = [] as Action[];
   let alive = servants;
   let possibility = bowls;
   // whenever a person dies
   // the possibility collapses to just the bowls that the dead person has had
-  game:
-  for (let i=0; i<120; i++) {
+  game: for (let i = 0; i < 120; i++) {
     if (i === 0) {
       soFar = [];
       alive = servants;
@@ -60,9 +54,15 @@ function main() {
     }
     for (const action of soFar) {
       if (action.when === i - 45) {
-        const taken = soFar.filter(x => x.servant === action.servant).flatMap(x => x.eaten).reduce((a,v) => a.add(v), new Set());
-        possibility = possibility.filter(x => !taken.has(x));
-        alive = alive.filter(x => x !== action.servant);
+        // on death
+        // find out what that person has taken
+        const taken = soFar
+          .filter((x) => x.servant === action.servant)
+          .filter((x) => x.when >= i - 45)
+          .flatMap((x) => x.eaten)
+          .reduce((a, v) => a.add(v), new Set());
+        possibility = possibility.filter((x) => taken.has(x));
+        alive = alive.filter((x) => x !== action.servant);
         if (possibility.length === 1) {
           console.log("win?");
           for (const a of soFar) {
@@ -72,30 +72,49 @@ function main() {
         }
         if (alive.length === 0) {
           console.log("lose all dead " + ++loseCount);
-          i=0;
+          i = 0;
           continue game;
         }
       }
       if (i === 119) {
-        console.log("lose max iter " + ++loseCount)
-        i=0;
+        console.log("lose max iter " + ++loseCount);
+        i = 0;
         continue game;
       }
     }
-    // if (win)
-    // if (alive.length == 0)
     for (const servant of alive) {
-      const move = getRand(choices);
-      soFar.push({
+      let move: Action = {
         servant,
-        when: i,
-        eaten: move,
-      });
+        eaten: Math.random() > 0.95 ? getRand(choices) : [],
+        when: i
+      }
+
+      while (!isValid(move, soFar)) move = {
+        servant,
+        eaten: getRand(choices),
+        when: i
+      };
+
+      soFar.push(move);
     }
   }
 }
 console.log("starting?");
 main();
+
+
+// function getDead(state: State) {
+//   const dead = state.actions
+//     .filter((x) => x.when + 45 <= state.timestep)
+//     .map((x) => x.servant)
+//     .reduce((s, v) => s.add(v), new Set());
+//   return dead;
+// }
+
+// function getAlive(state: State) {
+//   const dead = getDead(state);
+//   return servants.filter((x) => !dead.has(x));
+// }
 
 // function* step(state: State) {
 //   const dead = getDead(state);
@@ -128,8 +147,6 @@ main();
 
 //   }
 // }
-
-
 
 // function main() {
 //   const toProcess = [

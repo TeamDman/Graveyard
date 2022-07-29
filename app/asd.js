@@ -1,8 +1,8 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
+exports.__esModule = true;
 var power_set_x_1 = require("power-set-x");
 // const numBowls = 27;
-var numBowls = 4;
+var numBowls = 27;
 var numServants = 3;
 var bowls = [];
 for (var i = 0; i < numBowls; i++) {
@@ -26,7 +26,7 @@ function isValid(a, soFar) {
 }
 function main() {
     var loseCount = 0;
-    var choices = (0, power_set_x_1.default)(bowls);
+    var choices = (0, power_set_x_1["default"])(bowls);
     var soFar = [];
     var alive = servants;
     var possibility = bowls;
@@ -37,7 +37,7 @@ function main() {
             possibility = bowls;
         }
         var _loop_2 = function (action) {
-            if (action.when === i - 45) {
+            if (action.when === i - 45 && action.eaten.length > 0) {
                 // on death
                 // find out what that person has taken
                 var taken_1 = soFar
@@ -48,10 +48,11 @@ function main() {
                 possibility = possibility.filter(function (x) { return taken_1.has(x); });
                 alive = alive.filter(function (x) { return x !== action.servant; });
                 if (possibility.length === 1) {
-                    console.log("win?");
+                    console.log("win? " + i);
                     for (var _b = 0, soFar_2 = soFar; _b < soFar_2.length; _b++) {
                         var a = soFar_2[_b];
-                        console.dir(a);
+                        if (a.eaten.length > 0)
+                            console.dir(a);
                     }
                     return { value: void 0 };
                 }
@@ -80,7 +81,8 @@ function main() {
             var servant = alive_1[_a];
             var move = {
                 servant: servant,
-                eaten: Math.random() > 0.95 ? getRand(choices) : [],
+                eaten: Math.random() > 0.90 ? getRand(choices) : [],
+                // eaten: getRand(choices),
                 when: i
             };
             while (!isValid(move, soFar))
@@ -174,4 +176,3 @@ main();
 //   // for (let i=0; i<numBowls; i++) {
 //   // }
 // }
-//# sourceMappingURL=asd.js.map

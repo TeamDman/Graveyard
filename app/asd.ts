@@ -1,7 +1,7 @@
 import powerSet from "power-set-x";
 
 // const numBowls = 27;
-const numBowls = 4;
+const numBowls = 27;
 const numServants = 3;
 
 interface Action {
@@ -53,7 +53,7 @@ function main() {
       possibility = bowls;
     }
     for (const action of soFar) {
-      if (action.when === i - 45) {
+      if (action.when === i - 45 && action.eaten.length > 0) {
         // on death
         // find out what that person has taken
         const taken = soFar
@@ -64,8 +64,9 @@ function main() {
         possibility = possibility.filter((x) => taken.has(x));
         alive = alive.filter((x) => x !== action.servant);
         if (possibility.length === 1) {
-          console.log("win?");
+          console.log("win? " + i);
           for (const a of soFar) {
+            if (a.eaten.length > 0)
             console.dir(a);
           }
           return;
@@ -85,7 +86,8 @@ function main() {
     for (const servant of alive) {
       let move: Action = {
         servant,
-        eaten: Math.random() > 0.95 ? getRand(choices) : [],
+        eaten: Math.random() > 0.90 ? getRand(choices) : [],
+        // eaten: getRand(choices),
         when: i
       }
 
